@@ -18,12 +18,16 @@ func main() {
 		fmt.Print("$ ")
 
 		command, err := reader.ReadString('\n')
-		command = strings.TrimRight(command, "\r\n")
+		command = strings.TrimSpace(command)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 
 		}
 		//fmt.Println(command[:len(command)-1] + ": command not found")
+
+		if command == "exit" {
+			break
+		}
 		fmt.Println(command + ": command not found")
 
 	}
