@@ -30,7 +30,7 @@ func main() {
 		}
 
 		if strings.HasPrefix(command, "echo") {
-			fmt.Println(strings.TrimPrefix(command, "echo"))
+			fmt.Println(strings.TrimPrefix(command, "echo "))
 		}
 		//fmt.Println(command + ": command not found")
 
