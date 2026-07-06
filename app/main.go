@@ -25,15 +25,21 @@ func main() {
 		}
 		//fmt.Println(command[:len(command)-1] + ": command not found")
 
-		if command == "exit" {
+		if strings.HasPrefix(command, "type") {
+
+			if strings.HasSuffix(command, "exit") {
+				fmt.Println(strings.TrimPrefix(command, "type ") + "is a shell builtin")
+			} else if strings.HasSuffix(command, "echo") {
+				fmt.Println(strings.TrimPrefix(command, "type ") + "is a shell builtin")
+			} else {
+				fmt.Println(command + ": command not found")
+			}
+
+		} else if command == "exit" {
 			break
-		}
-
-		if strings.HasPrefix(command, "echo") {
+		} else if strings.HasPrefix(command, "echo") {
 			fmt.Println(strings.TrimPrefix(command, "echo "))
-		}
-
-		if !strings.HasPrefix(command, "echo") {
+		} else if !strings.HasPrefix(command, "echo") {
 			fmt.Println(command + ": command not found")
 		}
 
