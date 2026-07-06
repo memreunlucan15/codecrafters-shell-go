@@ -39,6 +39,8 @@ func main() {
 			} else if err != nil {
 				fmt.Println(strings.TrimPrefix(command, "type ") + ": not found")
 			} else {
+				if path != "" {
+				}
 				command = strings.TrimSpace(command)
 				tokens := strings.Split(command, " ")
 
