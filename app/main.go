@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -33,8 +34,12 @@ func main() {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
 			} else if strings.HasSuffix(command, "type") {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
-			} else {
+			}
+			path, err := exec.LookPath(strings.TrimPrefix(command, "type "))
+			if err != nil {
 				fmt.Println(strings.TrimPrefix(command, "type ") + ": not found")
+			} else {
+				fmt.Println(strings.TrimPrefix(command, "type") + " is " + path)
 			}
 
 		} else if command == "exit" {
