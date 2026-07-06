@@ -11,7 +11,7 @@ var _ = fmt.Print
 
 func main() {
 	// TODO: Uncomment the code below to pass the first stage
-	fmt.Print("$ invalid_pineapple_command")
+	fmt.Print("$ ")
 
 	command, err := bufio.NewReader(os.Stdin).ReadString('\n')
 	if err != nil {
