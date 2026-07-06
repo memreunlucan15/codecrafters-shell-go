@@ -25,10 +25,9 @@ func main() {
 
 		}
 		//fmt.Println(command[:len(command)-1] + ": command not found")
+		path, err := exec.LookPath(strings.TrimPrefix(command, "type "))
 
-		if strings.HasPrefix(command, "type") {
-
-			path, err := exec.LookPath(strings.TrimPrefix(command, "type "))
+		if strings.HasPrefix(command, "type") && err != nil {
 
 			if strings.HasSuffix(command, "exit") {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
