@@ -31,6 +31,8 @@ func main() {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
 			} else if strings.HasSuffix(command, "echo") {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
+			} else if strings.HasSuffix(command, "type") {
+				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
 			} else {
 				fmt.Println(command + ": command not found")
 			}
