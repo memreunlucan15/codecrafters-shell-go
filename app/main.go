@@ -39,7 +39,7 @@ func main() {
 			if err != nil {
 				fmt.Println(strings.TrimPrefix(command, "type ") + ": not found")
 			} else {
-				fmt.Println(strings.TrimPrefix(command, "type") + " is " + path)
+				fmt.Println(strings.TrimPrefix(command, "type ") + " is " + path)
 			}
 
 		} else if command == "exit" {
