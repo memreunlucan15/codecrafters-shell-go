@@ -28,15 +28,15 @@ func main() {
 
 		if strings.HasPrefix(command, "type") {
 
+			path, err := exec.LookPath(strings.TrimPrefix(command, "type "))
+
 			if strings.HasSuffix(command, "exit") {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
 			} else if strings.HasSuffix(command, "echo") {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
 			} else if strings.HasSuffix(command, "type") {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
-			}
-			path, err := exec.LookPath(strings.TrimPrefix(command, "type "))
-			if err != nil {
+			} else if err != nil {
 				fmt.Println(strings.TrimPrefix(command, "type ") + ": not found")
 			} else {
 				fmt.Println(strings.TrimPrefix(command, "type ") + " is " + path)
