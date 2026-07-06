@@ -39,7 +39,10 @@ func main() {
 			} else if err != nil {
 				fmt.Println(strings.TrimPrefix(command, "type ") + ": not found")
 			} else {
-				fmt.Println(strings.TrimPrefix(command, "type ") + " is " + path)
+				command = strings.TrimSpace(command)
+				tokens := strings.Split(command, " ")
+
+				exec.Command(tokens[1], tokens[2:]...)
 			}
 
 		} else if command == "exit" {
