@@ -28,9 +28,9 @@ func main() {
 		if strings.HasPrefix(command, "type") {
 
 			if strings.HasSuffix(command, "exit") {
-				fmt.Println(strings.TrimPrefix(command, "type ") + "is a shell builtin")
+				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
 			} else if strings.HasSuffix(command, "echo") {
-				fmt.Println(strings.TrimPrefix(command, "type ") + "is a shell builtin")
+				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
 			} else {
 				fmt.Println(command + ": command not found")
 			}
