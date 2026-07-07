@@ -43,7 +43,7 @@ func main() {
 				command = strings.TrimSpace(command)
 				tokens := strings.Split(command, " ")
 
-				exec.Command(tokens[1], tokens[2:]...)
+				exec.Command(tokens[0], tokens[1:]...)
 			}
 
 		} else if command == "exit" {
