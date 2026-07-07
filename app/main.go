@@ -45,7 +45,7 @@ func main() {
 				if err != nil {
 					fmt.Println(tokens[1] + ": not found")
 				} else {
-					path, err := exec.LookPath(tokens[1])
+					path, _ := exec.LookPath(tokens[1])
 					fmt.Println(tokens[1] + " is " + path)
 				}
 			}
