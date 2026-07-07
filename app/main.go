@@ -29,6 +29,8 @@ func main() {
 		if _, err := exec.LookPath(tokens[0]); err == nil {
 
 			var prog = exec.Command(tokens[0], tokens[1:]...)
+			prog.Stdout = os.Stdout
+			prog.Stderr = os.Stderr
 			prog.Run()
 		} else {
 
