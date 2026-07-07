@@ -54,9 +54,14 @@ func main() {
 
 		} else if tokens[0] == "cd" { // cd ile directory değişimi
 
-			err = os.Chdir(tokens[1])
-			if err != nil {
-				fmt.Println("cd: " + tokens[1] + ": No such file or directory")
+			if tokens[1] != "~" {
+				err = os.Chdir(tokens[1])
+				if err != nil {
+					fmt.Println("cd: " + tokens[1] + ": No such file or directory")
+				}
+			} else {
+				home_dir, _ := os.UserHomeDir()
+				_ = os.Chdir(home_dir)
 			}
 
 		} else if command == "exit" {
