@@ -78,16 +78,24 @@ func main() {
 func tokenci(line string) []string {
 	var sonuc []string
 	var inQuotes bool
+	var inDQuotes bool
 	current := ""
 	for i := 0; i < len(line); i++ {
 		c := line[i]
-		if c == '\'' {
+
+		if c == '"' {
+			if inDQuotes == false {
+				inDQuotes = true
+			} else {
+				inDQuotes = false
+			}
+		} else if c == '\'' {
 			if inQuotes == false {
 				inQuotes = true
 			} else {
 				inQuotes = false
 			}
-		} else if c == ' ' && inQuotes == false {
+		} else if c == ' ' && inQuotes == false && inDQuotes == false {
 			if current != "" {
 				sonuc = append(sonuc, current)
 				current = ""
