@@ -56,7 +56,7 @@ func main() {
 
 			err = os.Chdir(tokens[1])
 			if err != nil {
-				fmt.Println("<" + tokens[1] + ">" + ": No such file or directory")
+				fmt.Println("cd: " + tokens[1] + ": No such file or directory")
 			}
 
 		} else if command == "exit" {
