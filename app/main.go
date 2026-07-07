@@ -26,6 +26,11 @@ func main() {
 
 		}
 
+		if strings.ContainsAny(command, "'") {
+			tokens_q := strings.SplitAfter(command, "'")
+			fmt.Println(tokens_q[0:])
+		}
+
 		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
 
 			var prog = exec.Command(tokens[0], tokens[1:]...)
