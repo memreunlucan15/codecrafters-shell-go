@@ -20,15 +20,10 @@ func main() {
 
 		command, err := reader.ReadString('\n')
 		command = strings.TrimSpace(command)
-		tokens := strings.Split(command, " ") // Tokenlere ayırma
+		tokens := tokenci(command) // Tokenlere ayırma
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 
-		}
-
-		if strings.ContainsAny(command, "'") {
-			tokens_q := strings.SplitAfter(command, "'")
-			fmt.Println(tokens_q[0:])
 		}
 
 		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
@@ -78,4 +73,29 @@ func main() {
 		}
 
 	}
+}
+
+func tokenci(line string) []string {
+	var sonuc []string
+	var inQuotes bool
+	current := ""
+	for i := 0; i < len(line); i++ {
+		c := line[i]
+		if c == '\'' {
+			if inQuotes == false {
+				inQuotes = true
+			} else {
+				inQuotes = false
+			}
+		} else if c == ' ' && inQuotes == false {
+			if current != "" {
+				sonuc = append(sonuc, current)
+				current = ""
+			}
+		} else {
+			current += string(c)
+		}
+	}
+	sonuc = append(sonuc, current)
+	return sonuc
 }
