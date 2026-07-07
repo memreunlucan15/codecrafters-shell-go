@@ -89,7 +89,7 @@ func tokenci(line string) []string {
 			} else {
 				inDQuotes = false
 			}
-		} else if c == '\'' {
+		} else if c == '\'' && inDQuotes == false {
 			if inQuotes == false {
 				inQuotes = true
 			} else {
