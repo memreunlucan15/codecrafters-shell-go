@@ -35,11 +35,7 @@ func main() {
 		} else if tokens[0] == "type" {
 
 			switch tokens[1] {
-			case "exit":
-				fmt.Println(tokens[1] + " is a shell builtin")
-			case "echo":
-				fmt.Println(tokens[1] + " is a shell builtin")
-			case "type":
+			case "exit", "echo", "type", "pwd":
 				fmt.Println(tokens[1] + " is a shell builtin")
 			default:
 
