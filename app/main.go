@@ -26,7 +26,7 @@ func main() {
 
 		}
 
-		if path, err := exec.LookPath(tokens[0]); err == nil {
+		if _, err := exec.LookPath(tokens[0]); err == nil {
 
 			var prog = exec.Command(tokens[0], tokens[1:]...)
 			prog.Stdout = os.Stdout
@@ -34,7 +34,7 @@ func main() {
 			prog.Run()
 		} else if tokens[0] == "type" {
 
-			switch tokens[0] {
+			switch tokens[1] {
 			case "exit":
 				fmt.Println(tokens[1] + " is a shell builtin")
 			case "echo":
@@ -45,6 +45,7 @@ func main() {
 				if err != nil {
 					fmt.Println(tokens[1] + ": not found")
 				} else {
+					path, err := exec.LookPath(tokens[1])
 					fmt.Println(tokens[1] + " is " + path)
 				}
 			}
