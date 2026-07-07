@@ -28,8 +28,11 @@ func main() {
 
 		if _, err := exec.LookPath(tokens[0]); err == nil {
 
-			exec.Command(tokens[0], tokens[1:]...)
+			var prog = exec.Command(tokens[0], tokens[1:]...)
+			prog.Run()
+		} else {
 
+			fmt.Println(tokens[0] + ": command not found")
 		}
 
 	}
