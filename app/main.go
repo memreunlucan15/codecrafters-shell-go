@@ -26,12 +26,29 @@ func main() {
 
 		}
 
-		if _, err := exec.LookPath(tokens[0]); err == nil {
+		if path, err := exec.LookPath(tokens[0]); err == nil {
 
 			var prog = exec.Command(tokens[0], tokens[1:]...)
 			prog.Stdout = os.Stdout
 			prog.Stderr = os.Stderr
 			prog.Run()
+		} else if tokens[0] == "type" {
+
+			switch tokens[0] {
+			case "exit":
+				fmt.Println(tokens[1] + " is a shell builtin")
+			case "echo":
+				fmt.Println(tokens[1] + " is a shell builtin")
+			case "type":
+				fmt.Println(tokens[1] + " is a shell builtin")
+			default:
+				if err != nil {
+					fmt.Println(tokens[1] + ": not found")
+				} else {
+					fmt.Println(tokens[1] + " is " + path)
+				}
+			}
+
 		} else {
 
 			fmt.Println(tokens[0] + ": command not found")
