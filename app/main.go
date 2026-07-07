@@ -20,38 +20,16 @@ func main() {
 
 		command, err := reader.ReadString('\n')
 		command = strings.TrimSpace(command)
+		tokens := strings.Split(command, " ")
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 
 		}
-		//fmt.Println(command[:len(command)-1] + ": command not found")
-		path, err := exec.LookPath(strings.TrimPrefix(command, "type "))
 
-		if strings.HasPrefix(command, "type") || err != nil {
+		if _, err := exec.LookPath(tokens[0]); err == nil {
 
-			if strings.HasSuffix(command, "exit") {
-				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
-			} else if strings.HasSuffix(command, "echo") {
-				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
-			} else if strings.HasSuffix(command, "type") {
-				fmt.Println(strings.TrimPrefix(command, "type ") + " is a shell builtin")
-			} else if err == nil {
-				fmt.Println(strings.TrimPrefix(command, "type ") + ": not found")
-			} else {
-				if path != "" {
-				}
-				command = strings.TrimSpace(command)
-				tokens := strings.Split(command, " ")
+			exec.Command(tokens[0], tokens[1:]...)
 
-				exec.Command(tokens[0], tokens[1:]...)
-			}
-
-		} else if command == "exit" {
-			break
-		} else if strings.HasPrefix(command, "echo") {
-			fmt.Println(strings.TrimPrefix(command, "echo "))
-		} else if !strings.HasPrefix(command, "echo") {
-			fmt.Println(command + ": command not found")
 		}
 
 	}
