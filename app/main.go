@@ -51,9 +51,12 @@ func main() {
 				}
 			}
 
+		} else if command == "exit" {
+			break
+		} else if tokens[0] == "echo" {
+			fmt.Println(strings.TrimPrefix(command, "echo "))
 		} else {
-
-			fmt.Println(tokens[0] + ": command not found")
+			fmt.Println(command + ": command not found")
 		}
 
 	}
