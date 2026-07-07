@@ -20,13 +20,13 @@ func main() {
 
 		command, err := reader.ReadString('\n')
 		command = strings.TrimSpace(command)
-		tokens := strings.Split(command, " ")
+		tokens := strings.Split(command, " ") // Tokenlere ayırma
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 
 		}
 
-		if _, err := exec.LookPath(tokens[0]); err == nil {
+		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
 
 			var prog = exec.Command(tokens[0], tokens[1:]...)
 			prog.Stdout = os.Stdout
@@ -34,8 +34,8 @@ func main() {
 			prog.Run()
 		} else if tokens[0] == "type" {
 
-			switch tokens[1] {
-			case "exit", "echo", "type", "pwd":
+			switch tokens[1] { // type sonrası builtin komut kontrolü
+			case "exit", "echo", "type", "pwd", "cd":
 				fmt.Println(tokens[1] + " is a shell builtin")
 			default:
 
@@ -47,10 +47,17 @@ func main() {
 				}
 			}
 
-		} else if tokens[0] == "pwd" {
+		} else if tokens[0] == "pwd" { // pwd ile ablosute path alma
 
 			abs_path, _ := os.Getwd()
 			fmt.Println(abs_path)
+
+		} else if tokens[0] == "cd" { // cd ile directory değişimi
+
+			err = os.Chdir(tokens[1])
+			if err != nil {
+				fmt.Println("<" + tokens[1] + ">" + ": No such file or directory")
+			}
 
 		} else if command == "exit" {
 			break
