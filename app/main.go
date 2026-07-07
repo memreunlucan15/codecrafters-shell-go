@@ -42,7 +42,7 @@ func main() {
 			case "type":
 				fmt.Println(tokens[1] + " is a shell builtin")
 			default:
-				if err != nil {
+				if err == nil {
 					fmt.Println(tokens[1] + ": not found")
 				} else {
 					path, _ := exec.LookPath(tokens[1])
