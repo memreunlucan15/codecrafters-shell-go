@@ -51,6 +51,11 @@ func main() {
 				}
 			}
 
+		} else if tokens[0] == "pwd" {
+
+			abs_path, _ := os.Getwd()
+			fmt.Println(abs_path)
+
 		} else if command == "exit" {
 			break
 		} else if tokens[0] == "echo" {
