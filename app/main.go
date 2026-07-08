@@ -84,10 +84,10 @@ func tokenci(line string) []string {
 	for i := 0; i < len(line); i++ {
 		c := line[i]
 
-		if bslash {
+		if bslash && !inQuotes {
 			current += string(c)
 			bslash = false
-		} else if c == '\\' {
+		} else if c == '\\' && inQuotes {
 			bslash = true
 		} else if c == '"' {
 			if inDQuotes == false {
