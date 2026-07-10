@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -180,6 +181,13 @@ func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var oneriler [][]rune
 	var sonuc bool
 	var sira string
+	var klasorler = filepath.SplitList(os.Getenv("PATH"))
+
+	for i := 0; i < len(klasorler); i++ {
+		girdi, _ := os.ReadDir(klasorler[i])
+
+		builtinler = append(builtinler, girdi[i].Name())
+	}
 
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
