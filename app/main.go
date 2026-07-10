@@ -15,14 +15,14 @@ var _ = fmt.Print
 
 func main() {
 
-	completer := readline.NewPrefixCompleter(
+	benimCompleter := readline.NewPrefixCompleter(
 		readline.PcItem("echo"),
 		readline.PcItem("exit"),
 	)
 	//rl, err := readline.New("$ ")
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:       "$ ",
-		AutoComplete: completer,
+		AutoComplete: benimCompleter,
 	})
 	if err != nil {
 		panic(err)
