@@ -50,14 +50,14 @@ func main() {
 
 			switch tokens[1] { // type sonrası builtin komut kontrolü
 			case "exit", "echo", "type", "pwd", "cd":
-				fmt.Fprintln(out, tokens[1]+" is a shell builtin", outErr)
+				fmt.Fprintln(out, tokens[1]+" is a shell builtin")
 			default:
 
 				path, err1 := exec.LookPath(tokens[1])
 				if err1 == nil {
-					fmt.Fprintln(out, tokens[1]+" is "+path, outErr)
+					fmt.Fprintln(out, tokens[1]+" is "+path)
 				} else {
-					fmt.Fprintln(out, tokens[1]+": not found", outErr)
+					fmt.Fprintln(outErr, tokens[1]+": not found")
 				}
 			}
 
@@ -71,7 +71,7 @@ func main() {
 			if tokens[1] != "~" {
 				err = os.Chdir(tokens[1])
 				if err != nil {
-					fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory", outErr)
+					fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
 				}
 			} else {
 				home_dir, _ := os.UserHomeDir()
@@ -83,7 +83,7 @@ func main() {
 		} else if tokens[0] == "echo" {
 			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "), outErr)
 		} else {
-			fmt.Fprintln(out, command+": command not found", outErr)
+			fmt.Fprintln(outErr, command+": command not found")
 		}
 
 	}
