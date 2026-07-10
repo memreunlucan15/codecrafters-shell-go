@@ -29,8 +29,10 @@ func main() {
 
 		var out = os.Stdout
 		if redir {
+
 			f, _ := os.Create(tokens[len(tokens)-1])
 			out = f
+			tokens = tokens[:len(tokens)-2]
 		}
 
 		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
@@ -128,8 +130,7 @@ func isRedir(tokenized []string) bool {
 
 		if c == ">" {
 			durum = true
-		} else {
-			durum = false
+			return durum
 		}
 	}
 	return durum
