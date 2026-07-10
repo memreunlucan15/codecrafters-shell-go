@@ -29,15 +29,17 @@ func main() {
 
 		var out = os.Stdout
 		var outErr = os.Stderr
-		if redir == 1 {
-
+		switch redir {
+		case 1:
 			f, _ := os.Create(tokens[len(tokens)-1])
 			out = f
 			tokens = tokens[:len(tokens)-2]
-		} else if redir == 2 {
+
+		case 2:
 			e, _ := os.Create(tokens[len(tokens)-1])
 			outErr = e
 			tokens = tokens[:len(tokens)-2]
+		default:
 		}
 
 		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
@@ -64,7 +66,7 @@ func main() {
 		} else if tokens[0] == "pwd" { // pwd ile ablosute path alma
 
 			abs_path, _ := os.Getwd()
-			fmt.Fprintln(out, abs_path, outErr)
+			fmt.Fprintln(out, abs_path)
 
 		} else if tokens[0] == "cd" { // cd ile directory değişimi
 
@@ -81,7 +83,7 @@ func main() {
 		} else if command == "exit" {
 			break
 		} else if tokens[0] == "echo" {
-			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "), outErr)
+			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
 		} else {
 			fmt.Fprintln(outErr, command+": command not found")
 		}
