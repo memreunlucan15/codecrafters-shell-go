@@ -44,7 +44,7 @@ func main() {
 
 			var prog = exec.Command(tokens[0], tokens[1:]...)
 			prog.Stdout = out
-			prog.Stderr = os.Stderr
+			prog.Stderr = outErr
 			prog.Run()
 		} else if tokens[0] == "type" {
 
