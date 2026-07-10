@@ -181,12 +181,13 @@ func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var oneriler [][]rune
 	var sonuc bool
 	var sira string
-	var klasorler = filepath.SplitList(os.Getenv("PATH"))
+	klasorler := filepath.SplitList(os.Getenv("PATH"))
 
 	for i := 0; i < len(klasorler); i++ {
 		girdi, _ := os.ReadDir(klasorler[i])
-
-		builtinler = append(builtinler, girdi[i].Name())
+		for j := 0; j < len(girdi); j++ {
+			builtinler = append(builtinler, girdi[j].Name())
+		}
 	}
 
 	for i := 0; i < len(builtinler); i++ {
