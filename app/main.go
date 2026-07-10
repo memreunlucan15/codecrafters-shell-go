@@ -38,7 +38,7 @@ func main() {
 		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
 
 			var prog = exec.Command(tokens[0], tokens[1:]...)
-			prog.Stdout = os.Stdout
+			prog.Stdout = out
 			prog.Stderr = os.Stderr
 			prog.Run()
 		} else if tokens[0] == "type" {
