@@ -19,7 +19,7 @@ func main() {
 	//rl, err := readline.New("$ ")
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:       "$ ",
-		AutoComplete: benimCompleter{},
+		AutoComplete: &benimCompleter{},
 	})
 	if err != nil {
 		panic(err)
@@ -172,10 +172,14 @@ func isRedir(tokenized []string) int {
 	return durum
 }
 
-type benimCompleter struct{}
+type benimCompleter struct {
+	tabSayisi    int
+	oncekiPrefix string
+}
 
-func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
+func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
+	b.tabSayisi++
 	prefix := string(line[:pos])           // burada prefix dediğimiz şey, terminalde şu anda yazılı olan komut
 	builtinler := []string{"echo", "exit"} // autocomplete öneri havuzu
 	var oneriler [][]rune
@@ -202,7 +206,11 @@ func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 	if len(oneriler) == 0 {
 		fmt.Print("\x07")
+	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
+		fmt.Print("\x07")
+		oneriler = nil
 	}
 
+	b.oncekiPrefix = prefix
 	return oneriler, len(prefix) // önerileri ve prefixin uzunluğunu geri döndürdük
 }
