@@ -39,7 +39,10 @@ func main() {
 			e, _ := os.Create(tokens[len(tokens)-1])
 			outErr = e
 			tokens = tokens[:len(tokens)-2]
-		default:
+		case 3:
+			a, _ := os.Open(tokens[len(tokens)-1])
+			out = a
+			tokens = tokens[:len(tokens)-2]
 		}
 
 		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
@@ -140,6 +143,9 @@ func isRedir(tokenized []string) int {
 			return durum
 		} else if c == "2>" {
 			durum = 2
+			return durum
+		} else if c == ">>" || c == "1>>" {
+			durum = 3
 			return durum
 		}
 	}
