@@ -40,7 +40,7 @@ func main() {
 			outErr = e
 			tokens = tokens[:len(tokens)-2]
 		case 3:
-			a, _ := os.OpenFile(tokens[len(tokens)-1], os.O_RDWR|os.O_CREATE, 0644)
+			a, _ := os.OpenFile(tokens[len(tokens)-1], os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
 			out = a
 			tokens = tokens[:len(tokens)-2]
 		}
