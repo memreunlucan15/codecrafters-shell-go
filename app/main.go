@@ -190,7 +190,7 @@ func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		var siraBuiltin = builtinler[i]
 		if sonuc {
 			sira = siraBuiltin[len(prefix):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
-			sira = sira + ""                 // boşluk ekledik
+			sira = sira + " "                // boşluk ekledik
 			eslesme = true
 		}
 
