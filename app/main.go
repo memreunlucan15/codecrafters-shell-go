@@ -21,9 +21,16 @@ func main() {
 		command, err := reader.ReadString('\n')
 		command = strings.TrimSpace(command)
 		tokens := tokenci(command) // Tokenlere ayırma
+		redir := isRedir(tokens)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, "Error reading input:", err)
 
+		}
+
+		var out = os.Stdout
+		if redir {
+			f, _ := os.Create(tokens[len(tokens)-1])
+			out = f
 		}
 
 		if _, err := exec.LookPath(tokens[0]); err == nil { // Path kontrolü
@@ -36,28 +43,28 @@ func main() {
 
 			switch tokens[1] { // type sonrası builtin komut kontrolü
 			case "exit", "echo", "type", "pwd", "cd":
-				fmt.Println(tokens[1] + " is a shell builtin")
+				fmt.Fprintln(out, tokens[1]+" is a shell builtin")
 			default:
 
 				path, err1 := exec.LookPath(tokens[1])
 				if err1 == nil {
-					fmt.Println(tokens[1] + " is " + path)
+					fmt.Fprintln(out, tokens[1]+" is "+path)
 				} else {
-					fmt.Println(tokens[1] + ": not found")
+					fmt.Fprintln(out, tokens[1]+": not found")
 				}
 			}
 
 		} else if tokens[0] == "pwd" { // pwd ile ablosute path alma
 
 			abs_path, _ := os.Getwd()
-			fmt.Println(abs_path)
+			fmt.Fprintln(out, abs_path)
 
 		} else if tokens[0] == "cd" { // cd ile directory değişimi
 
 			if tokens[1] != "~" {
 				err = os.Chdir(tokens[1])
 				if err != nil {
-					fmt.Println("cd: " + tokens[1] + ": No such file or directory")
+					fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
 				}
 			} else {
 				home_dir, _ := os.UserHomeDir()
@@ -67,9 +74,9 @@ func main() {
 		} else if command == "exit" {
 			break
 		} else if tokens[0] == "echo" {
-			fmt.Println(strings.TrimPrefix(command, "echo "))
+			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
 		} else {
-			fmt.Println(command + ": command not found")
+			fmt.Fprintln(out, command+": command not found")
 		}
 
 	}
@@ -112,4 +119,18 @@ func tokenci(line string) []string {
 	}
 	sonuc = append(sonuc, current)
 	return sonuc
+}
+
+func isRedir(tokenized []string) bool {
+	var durum bool
+	for i := 0; i < len(tokenized); i++ {
+		c := tokenized[i]
+
+		if c == ">" {
+			durum = true
+		} else {
+			durum = false
+		}
+	}
+	return durum
 }
