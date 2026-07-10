@@ -15,14 +15,10 @@ var _ = fmt.Print
 
 func main() {
 
-	benimCompleter := readline.NewPrefixCompleter(
-		readline.PcItem("echo"),
-		readline.PcItem("exit"),
-	)
 	//rl, err := readline.New("$ ")
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:       "$ ",
-		AutoComplete: benimCompleter,
+		AutoComplete: benimCompleter{},
 	})
 	if err != nil {
 		panic(err)
@@ -184,20 +180,20 @@ func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var oneriler [][]rune
 	var sonuc bool
 	var sira string
-	var eslesme bool
+
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
 		if sonuc {
-			sira = siraBuiltin[len(prefix):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
-			sira = sira + " "                // boşluk ekledik
-			eslesme = true
+			sira = siraBuiltin[len(prefix):]          // adaydaki prefixten fazla olan karakterleri sira ya atadık
+			sira = sira + " "                         // boşluk ekledik
+			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
 		}
 
 	}
-	if !eslesme {
+	if len(oneriler) != 0 {
 		fmt.Print("\x07")
 	}
-	oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
-	return oneriler, len(prefix)              // önerileri ve prefixin uzunluğunu geri döndürdük
+
+	return oneriler, len(prefix) // önerileri ve prefixin uzunluğunu geri döndürdük
 }
