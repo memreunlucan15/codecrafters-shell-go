@@ -196,7 +196,7 @@ func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	}
 	if !eslesme {
-		fmt.Fprintln(os.Stdout, "\x07")
+		fmt.Println("\x07")
 	}
 	oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
 	return oneriler, len(prefix)              // önerileri ve prefixin uzunluğunu geri döndürdük
