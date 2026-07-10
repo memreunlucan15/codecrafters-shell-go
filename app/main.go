@@ -191,7 +191,7 @@ func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		}
 
 	}
-	if len(oneriler) != 0 {
+	if len(oneriler) == 0 {
 		fmt.Print("\x07")
 	}
 
