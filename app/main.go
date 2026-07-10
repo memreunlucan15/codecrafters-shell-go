@@ -128,7 +128,7 @@ func isRedir(tokenized []string) bool {
 	for i := 0; i < len(tokenized); i++ {
 		c := tokenized[i]
 
-		if c == ">" {
+		if c == ">" || c == "1>" {
 			durum = true
 			return durum
 		}
