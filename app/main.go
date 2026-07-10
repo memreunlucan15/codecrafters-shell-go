@@ -1,11 +1,13 @@
 package main
 
 import (
-	"bufio"
+	//"bufio"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/chzyer/readline"
 )
 
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
@@ -13,12 +15,26 @@ var _ = fmt.Print
 
 func main() {
 
-	// TODO: Uncomment the code below to pass the first stage
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Print("$ ")
+	completer := readline.NewPrefixCompleter(
+		readline.PcItem("echo"),
+		readline.PcItem("exit"),
+	)
+	//rl, err := readline.New("$ ")
+	rl, err := readline.NewEx(&readline.Config{
+		Prompt:       "$ ",
+		AutoComplete: completer,
+	})
+	if err != nil {
+		panic(err)
+	}
+	defer rl.Close()
 
-		command, err := reader.ReadString('\n')
+	// TODO: Uncomment the code below to pass the first stage
+
+	for {
+		//fmt.Print("$ ")
+
+		command, err := rl.Readline()
 		command = strings.TrimSpace(command)
 		tokens := tokenci(command) // Tokenlere ayırma
 		redir := isRedir(tokens)
