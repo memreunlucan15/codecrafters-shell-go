@@ -174,3 +174,30 @@ func isRedir(tokenized []string) int {
 	}
 	return durum
 }
+
+type benimCompleter struct{}
+
+func (b benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
+
+	prefix := string(line[:pos])           // burada prefix dediğimiz şey, terminalde şu anda yazılı olan komut
+	builtinler := []string{"echo", "exit"} // autocomplete öneri havuzu
+	var oneriler [][]rune
+	var sonuc bool
+	var sira string
+	var eslesme bool
+	for i := 0; i < len(builtinler); i++ {
+		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
+		var siraBuiltin = builtinler[i]
+		if sonuc {
+			sira = siraBuiltin[len(prefix):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
+			sira = sira + ""                 // boşluk ekledik
+			eslesme = true
+		}
+
+	}
+	if !eslesme {
+		fmt.Fprintln(os.Stdout, "\x07")
+	}
+	oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
+	return oneriler, len(prefix)              // önerileri ve prefixin uzunluğunu geri döndürdük
+}
