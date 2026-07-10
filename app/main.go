@@ -40,8 +40,12 @@ func main() {
 			outErr = e
 			tokens = tokens[:len(tokens)-2]
 		case 3:
-			a, _ := os.OpenFile(tokens[len(tokens)-1], os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-			out = a
+			fa, _ := os.OpenFile(tokens[len(tokens)-1], os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+			out = fa
+			tokens = tokens[:len(tokens)-2]
+		case 4:
+			ea, _ := os.OpenFile(tokens[len(tokens)-1], os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+			outErr = ea
 			tokens = tokens[:len(tokens)-2]
 		}
 
@@ -146,6 +150,9 @@ func isRedir(tokenized []string) int {
 			return durum
 		} else if c == ">>" || c == "1>>" {
 			durum = 3
+			return durum
+		} else if c == "2>>" {
+			durum = 4
 			return durum
 		}
 	}
