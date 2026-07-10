@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -193,7 +194,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			builtinler = append(builtinler, girdi[j].Name())
 		}
 	}
-
+	sort.Strings(builtinler)
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
@@ -212,5 +213,6 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 
 	b.oncekiPrefix = prefix
+
 	return oneriler, len(prefix) // önerileri ve prefixin uzunluğunu geri döndürdük
 }
