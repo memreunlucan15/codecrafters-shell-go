@@ -230,15 +230,13 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		kuyruk = append(kuyruk, strings.TrimPrefix(eslesenler[i], prefix))
 	}
 
-	lcp := strings.TrimSpace(kuyruk[0])
-	for i := 0; i < len(kuyruk[1:]); i++ {
-
-		for j := 0; j < len(kuyruk); j++ {
-			if !strings.HasPrefix(strings.TrimSpace(kuyruk[j]), lcp) {
-				lcp = lcp[:len(lcp)-1]
-				if lcp == "" {
-					break
-				}
+	lcp := ""
+	if len(kuyruk) > 1 { // LCP sadece çoklu eşleşmede anlamlı; boş listede kuyruk[0] panikler
+		lcp = strings.TrimSpace(kuyruk[0])
+		for i := 1; i < len(kuyruk); i++ {
+			k := strings.TrimSpace(kuyruk[i])
+			for lcp != "" && !strings.HasPrefix(k, lcp) {
+				lcp = lcp[:len(lcp)-1] // başlayana ya da boşalana kadar traşla
 			}
 		}
 	}
@@ -251,7 +249,6 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 
 	if len(lcp) != 0 {
-
 		//fmt.Print(lcp)
 		oneriler = [][]rune{[]rune(lcp)}
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
