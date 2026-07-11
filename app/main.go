@@ -179,13 +179,19 @@ type benimCompleter struct {
 
 func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
-	b.tabSayisi++
 	prefix := string(line[:pos])           // burada prefix dediğimiz şey, terminalde şu anda yazılı olan komut
 	builtinler := []string{"echo", "exit"} // autocomplete öneri havuzu
 	var oneriler [][]rune
 	var sonuc bool
 	var sira string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
+
+	if prefix != b.oncekiPrefix {
+		b.tabSayisi = 0 // yeni yazı → sıfırla
+		b.oncekiPrefix = prefix
+	}
+
+	b.tabSayisi++
 
 	for i := 0; i < len(klasorler); i++ {
 		girdi, _ := os.ReadDir(klasorler[i])
@@ -197,7 +203,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
-		if sonuc {
+		if sonuc && len(prefix) > 0 {
 			sira = siraBuiltin[len(prefix):]          // adaydaki prefixten fazla olan karakterleri sira ya atadık
 			sira = sira + " "                         // boşluk ekledik
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
@@ -208,11 +214,10 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		fmt.Print("\x07")
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
 		fmt.Print("\x07")
-		//oneriler = nil
-		b.oncekiPrefix = prefix
-	} else if b.tabSayisi == 2 {
-		//fmt.Print("\n")
-		fmt.Println("$ " + prefix)
+		oneriler = nil
+	} else if len(oneriler) > 1 && b.tabSayisi == 2 {
+		fmt.Print("\n")
+		fmt.Print("$ " + prefix)
 		return nil, len(prefix)
 	}
 
