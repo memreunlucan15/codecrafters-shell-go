@@ -219,7 +219,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		oneriler = nil
 	} else if len(oneriler) > 1 && b.tabSayisi == 2 {
 		fmt.Print("\n")
-		fmt.Print(eslesenler[0:])
+		fmt.Print(strings.Join(eslesenler, "  "))
 		fmt.Print("\n")
 		fmt.Print("$ " + prefix)
 		return nil, len(prefix)
