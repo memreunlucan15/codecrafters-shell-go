@@ -225,12 +225,16 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		}
 
 	}
+	var kuyruk []string
+	for i := 0; i < len(eslesenler); i++ {
+		kuyruk = append(kuyruk, strings.TrimPrefix(eslesenler[i], prefix))
+	}
 
-	lcp := strings.TrimSpace(eslesenler[0])
-	for i := 0; i < len(eslesenler[1:]); i++ {
+	lcp := strings.TrimSpace(kuyruk[0])
+	for i := 0; i < len(kuyruk[1:]); i++ {
 
-		for j := 0; j < len(eslesenler); j++ {
-			if !strings.HasPrefix(strings.TrimSpace(eslesenler[j]), lcp) {
+		for j := 0; j < len(kuyruk); j++ {
+			if !strings.HasPrefix(strings.TrimSpace(kuyruk[j]), lcp) {
 				lcp = lcp[:len(lcp)-1]
 				if lcp == "" {
 					break
@@ -247,7 +251,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
 		if lcp > prefix {
 
-			fmt.Print(strings.TrimPrefix(lcp, prefix))
+			fmt.Print(lcp)
 			oneriler = nil
 		} else {
 			fmt.Print("\x07")
