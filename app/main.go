@@ -235,9 +235,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		fmt.Print("\x07")
 		if strings.HasSuffix(prefix, "_") {
 
-			fmt.Print(oneriler[0])
+			fmt.Print(string(oneriler[0]))
 			oneriler = nil
-
 		} else {
 
 			oneriler = nil
