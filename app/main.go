@@ -226,18 +226,31 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	}
 
+	lcp := strings.TrimSpace(eslesenler[0])
+	for i := 0; i < len(eslesenler[1:]); i++ {
+
+		for j := 0; j < len(eslesenler); j++ {
+			if !strings.HasPrefix(strings.TrimSpace(eslesenler[j]), lcp) {
+				lcp = lcp[:len(lcp)-1]
+				if lcp == "" {
+					break
+				}
+			}
+		}
+	}
+
 	if len(oneriler) == 0 {
 		fmt.Print("\x07")
 	} else if len(oneriler) == 1 {
 
 		return oneriler, len(prefix)
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
-		fmt.Print("\x07")
-		if strings.HasSuffix(prefix, "_") {
-			fmt.Print(strings.TrimSpace(string(oneriler[0])))
+		if lcp > prefix {
+
+			fmt.Print(lcp)
 			oneriler = nil
 		} else {
-
+			fmt.Print("\x07")
 			oneriler = nil
 		}
 	} else if len(oneriler) > 1 && b.tabSayisi == 2 {
