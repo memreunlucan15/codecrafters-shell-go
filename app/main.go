@@ -232,12 +232,13 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 		return oneriler, len(prefix)
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
+		fmt.Print("\x07")
 		if strings.HasSuffix(prefix, "_") {
 
 			fmt.Print(oneriler[0])
 
 		} else {
-			fmt.Print("\x07")
+
 			oneriler = nil
 		}
 	} else if len(oneriler) > 1 && b.tabSayisi == 2 {
