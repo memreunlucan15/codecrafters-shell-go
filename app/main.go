@@ -234,8 +234,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
 		fmt.Print("\x07")
 		if strings.HasSuffix(prefix, "_") {
-
-			fmt.Print(strings.TrimSpace(string(oneriler[0])))
+			yazdir := oneriler[0]
+			fmt.Print(yazdir)
 			oneriler = nil
 		} else {
 
