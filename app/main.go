@@ -179,8 +179,9 @@ type benimCompleter struct {
 
 func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
-	prefix := string(line[:pos])           // burada prefix dediğimiz şey, terminalde şu anda yazılı olan komut
-	builtinler := []string{"echo", "exit"} // autocomplete öneri havuzu
+	prefix := string(line[:pos])                // burada prefix dediğimiz şey, terminalde şu anda yazılı olan komut
+	var builtinler []string                     // boş autocomplete öneri havuzu
+	bizimbuiltinler := []string{"echo", "exit"} // mevcut builtinlerimiz
 	var oneriler [][]rune
 	var sonuc bool
 	var sira string
@@ -194,10 +195,22 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	b.tabSayisi++
 
+	gorulen := map[string]bool{}
+
+	for i := 0; i < len(bizimbuiltinler); i++ {
+		if !gorulen[bizimbuiltinler[i]] {
+			builtinler = append(builtinler, bizimbuiltinler[i])
+			gorulen[bizimbuiltinler[i]] = true
+		}
+	}
+
 	for i := 0; i < len(klasorler); i++ {
 		girdi, _ := os.ReadDir(klasorler[i])
 		for j := 0; j < len(girdi); j++ {
-			builtinler = append(builtinler, girdi[j].Name())
+			if !gorulen[girdi[j].Name()] {
+				builtinler = append(builtinler, girdi[j].Name())
+				gorulen[girdi[j].Name()] = true
+			}
 		}
 	}
 	sort.Strings(builtinler)
@@ -205,11 +218,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
 		if sonuc {
-			sira = siraBuiltin[len(prefix):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
-			sira = sira + " "                // boşluk ekledik
-			if len(sira) > 0 && i == 2 {
-				break
-			}
+			sira = siraBuiltin[len(prefix):]          // adaydaki prefixten fazla olan karakterleri sira ya atadık
+			sira = sira + " "                         // boşluk ekledik
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
 			eslesenler = append(eslesenler, builtinler[i])
 		}
