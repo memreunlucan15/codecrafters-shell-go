@@ -203,7 +203,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
-		if sonuc && len(prefix) > 0 {
+		if sonuc {
 			sira = siraBuiltin[len(prefix):]          // adaydaki prefixten fazla olan karakterleri sira ya atadık
 			sira = sira + " "                         // boşluk ekledik
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
