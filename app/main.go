@@ -30,7 +30,6 @@ func main() {
 	// TODO: Uncomment the code below to pass the first stage
 
 	for {
-		//fmt.Print("$ ")
 
 		command, err := rl.Readline()
 		command = strings.TrimSpace(command)
@@ -101,7 +100,7 @@ func main() {
 				_ = os.Chdir(home_dir)
 			}
 
-		} else if command == "exit" {
+		} else if tokens[0] == "exit" {
 			break
 		} else if tokens[0] == "echo" {
 			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
@@ -212,8 +211,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		oneriler = nil
 		b.oncekiPrefix = prefix
 	} else if b.tabSayisi == 2 {
-		fmt.Println("$ " + b.oncekiPrefix)
+		fmt.Print("\n")
+		fmt.Print("$ " + prefix)
+		return nil, len(prefix)
 	}
 
 	return oneriler, len(prefix) // önerileri ve prefixin uzunluğunu geri döndürdük
+
 }
