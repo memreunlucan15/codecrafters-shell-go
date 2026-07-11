@@ -208,7 +208,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		fmt.Print("\x07")
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
 		fmt.Print("\x07")
-		oneriler = nil
+		//oneriler = nil
 		b.oncekiPrefix = prefix
 	} else if b.tabSayisi == 2 {
 		fmt.Print("\n")
