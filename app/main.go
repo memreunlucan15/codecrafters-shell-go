@@ -247,7 +247,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
 		if lcp > prefix {
 
-			fmt.Print(lcp)
+			fmt.Print(strings.TrimPrefix(lcp, prefix))
 			oneriler = nil
 		} else {
 			fmt.Print("\x07")
