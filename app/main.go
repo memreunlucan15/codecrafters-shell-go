@@ -249,7 +249,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 		return oneriler, len(prefix)
 	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
-		if lcp > prefix {
+		if len(lcp) != 0 {
 
 			fmt.Print(lcp)
 			oneriler = nil
