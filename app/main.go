@@ -232,7 +232,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	lcp := ""
 	if len(kuyruk) > 1 {
-		lcp := strings.TrimSpace(kuyruk[0])
+		lcp = strings.TrimSpace(kuyruk[0])
 		for i := 0; i < len(kuyruk[1:]); i++ {
 
 			for j := 0; j < len(kuyruk); j++ {
