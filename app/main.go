@@ -248,11 +248,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	} else if len(oneriler) == 1 {
 
 		return oneriler, len(prefix)
-	} else if len(oneriler) > 1 && b.tabSayisi == 1 {
+	} else if len(oneriler) > 1 && b.tabSayisi == 1 && len(lcp) != 0 {
 		if len(lcp) != 0 {
 
-			fmt.Print(lcp)
-			oneriler = nil
+			//fmt.Print(lcp)
+			oneriler = [][]rune{[]rune(lcp)}
 		} else {
 			fmt.Print("\x07")
 			oneriler = nil
