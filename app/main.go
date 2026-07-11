@@ -184,6 +184,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var oneriler [][]rune
 	var sonuc bool
 	var sira string
+	var eslesenler []string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
 
 	if prefix != b.oncekiPrefix {
@@ -207,6 +208,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			sira = siraBuiltin[len(prefix):]          // adaydaki prefixten fazla olan karakterleri sira ya atadık
 			sira = sira + " "                         // boşluk ekledik
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
+			eslesenler = append(eslesenler, builtinler[i])
 		}
 
 	}
@@ -216,6 +218,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		fmt.Print("\x07")
 		oneriler = nil
 	} else if len(oneriler) > 1 && b.tabSayisi == 2 {
+		fmt.Print("\n")
+		fmt.Print(eslesenler[0:])
 		fmt.Print("\n")
 		fmt.Print("$ " + prefix)
 		return nil, len(prefix)
