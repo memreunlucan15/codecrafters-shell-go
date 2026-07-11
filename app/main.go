@@ -226,17 +226,20 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	}
 	var kuyruk []string
-	for i := 0; i < len(eslesenler); i++ {
-		kuyruk = append(kuyruk, strings.TrimPrefix(eslesenler[i], prefix))
-	}
+	var lcp string
+	if len(eslesenler) != 0 {
+		for i := 0; i < len(eslesenler); i++ {
+			kuyruk = append(kuyruk, strings.TrimPrefix(eslesenler[i], prefix))
+		}
 
-	lcp := ""
-	if len(kuyruk) > 1 { // LCP sadece çoklu eşleşmede anlamlı; boş listede kuyruk[0] panikler
-		lcp = strings.TrimSpace(kuyruk[0])
-		for i := 1; i < len(kuyruk); i++ {
-			k := strings.TrimSpace(kuyruk[i])
-			for lcp != "" && !strings.HasPrefix(k, lcp) {
-				lcp = lcp[:len(lcp)-1] // başlayana ya da boşalana kadar traşla
+		lcp := ""
+		if len(kuyruk) > 1 { // LCP sadece çoklu eşleşmede anlamlı; boş listede kuyruk[0] panikler
+			lcp = strings.TrimSpace(kuyruk[0])
+			for i := 1; i < len(kuyruk); i++ {
+				k := strings.TrimSpace(kuyruk[i])
+				for lcp != "" && !strings.HasPrefix(k, lcp) {
+					lcp = lcp[:len(lcp)-1] // başlayana ya da boşalana kadar traşla
+				}
 			}
 		}
 	}
