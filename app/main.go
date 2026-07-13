@@ -198,7 +198,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 			klasor = "."
 
-			if strings.ContainsAny(prefix, "/") {
+			if strings.Contains(prefix, "/") {
 				kelime := newprefix[len(newprefix)-1]
 				i := strings.LastIndex(newprefix[1], "/")
 				klasor = kelime[:i]
@@ -221,6 +221,27 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	gorulen := map[string]bool{}
 
+	var adayhavuzu []string
+	if bltmiwdmi {
+		adayhavuzu = append(adayhavuzu, klasor)
+	} else {
+		adayhavuzu = klasorler
+	}
+
+	var isGirdiDir []bool
+	// aday havuzu oluşturma döngüsü
+	for i := 0; i < len(adayhavuzu); i++ {
+		girdi, _ := os.ReadDir(adayhavuzu[i])
+		for j := 0; j < len(girdi); j++ {
+			if !gorulen[girdi[j].Name()] {
+				builtinler = append(builtinler, girdi[j].Name())
+				isGirdiDir = append(isGirdiDir, girdi[j].IsDir())
+				gorulen[girdi[j].Name()] = true
+			}
+		}
+	}
+
+	// builtinlere echo-exit ekleme kadar noktası
 	if !bltmiwdmi {
 		for i := 0; i < len(bizimbuiltinler); i++ {
 			if !gorulen[bizimbuiltinler[i]] {
@@ -230,30 +251,20 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		}
 	}
 
-	var adayhavuzu []string
-	if bltmiwdmi {
-		adayhavuzu = append(adayhavuzu, klasor)
-	} else {
-		adayhavuzu = klasorler
-	}
-
-	for i := 0; i < len(adayhavuzu); i++ {
-		girdi, _ := os.ReadDir(adayhavuzu[i])
-		for j := 0; j < len(girdi); j++ {
-			if !gorulen[girdi[j].Name()] {
-				builtinler = append(builtinler, girdi[j].Name())
-				gorulen[girdi[j].Name()] = true
-			}
-		}
-	}
-
+	//sıralama
 	sort.Strings(builtinler)
+
+	//filtreleme döngüsü
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
 		if sonuc {
-			sira = siraBuiltin[len(prefix):]          // adaydaki prefixten fazla olan karakterleri sira ya atadık
-			sira = sira + " "                         // boşluk ekledik
+			sira = siraBuiltin[len(prefix):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
+			if !isGirdiDir[i] {
+				sira = sira + " " // boşluk ekledik
+			} else {
+				sira = sira + "/"
+			}
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
 			eslesenler = append(eslesenler, builtinler[i])
 		}
