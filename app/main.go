@@ -68,46 +68,61 @@ func main() {
 			prog.Stdout = out
 			prog.Stderr = outErr
 			prog.Run()
-		} else if tokens[0] == "type" {
-
-			switch tokens[1] { // type sonrası builtin komut kontrolü
-			case "exit", "echo", "type", "pwd", "cd":
-				fmt.Fprintln(out, tokens[1]+" is a shell builtin")
-			default:
-
-				path, err1 := exec.LookPath(tokens[1])
-				if err1 == nil {
-					fmt.Fprintln(out, tokens[1]+" is "+path)
-				} else {
-					fmt.Fprintln(outErr, tokens[1]+": not found")
-				}
-			}
-
-		} else if tokens[0] == "pwd" { // pwd ile ablosute path alma
-
-			abs_path, _ := os.Getwd()
-			fmt.Fprintln(out, abs_path)
-
-		} else if tokens[0] == "cd" { // cd ile directory değişimi
-
-			if tokens[1] != "~" {
-				err = os.Chdir(tokens[1])
-				if err != nil {
-					fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
-				}
-			} else {
-				home_dir, _ := os.UserHomeDir()
-				_ = os.Chdir(home_dir)
-			}
-
-		} else if tokens[0] == "exit" {
-			break
-		} else if tokens[0] == "echo" {
-			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
 		} else {
-			fmt.Fprintln(outErr, command+": command not found")
-		}
+			switch tokens[0] {
+			case "type":
+				{
 
+					switch tokens[1] { // type sonrası builtin komut kontrolü
+					case "exit", "echo", "type", "pwd", "cd":
+						fmt.Fprintln(out, tokens[1]+" is a shell builtin")
+					default:
+
+						path, err1 := exec.LookPath(tokens[1])
+						if err1 == nil {
+							fmt.Fprintln(out, tokens[1]+" is "+path)
+						} else {
+							fmt.Fprintln(outErr, tokens[1]+": not found")
+						}
+					}
+
+				}
+			case "pwd":
+				{ // pwd ile ablosute path alma
+
+					abs_path, _ := os.Getwd()
+					fmt.Fprintln(out, abs_path)
+
+				}
+			case "cd":
+				{ // cd ile directory değişimi
+
+					if tokens[1] != "~" {
+						err = os.Chdir(tokens[1])
+						if err != nil {
+							fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
+						}
+					} else {
+						home_dir, _ := os.UserHomeDir()
+						_ = os.Chdir(home_dir)
+					}
+
+				}
+
+			case "exit":
+				{
+					return
+				}
+			case "echo":
+				{
+					fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
+				}
+			default:
+				{
+					fmt.Fprintln(outErr, command+": command not found")
+				}
+			}
+		}
 	}
 }
 
@@ -200,7 +215,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 			if strings.Contains(prefix, "/") {
 				kelime := newprefix[len(newprefix)-1]
-				i := strings.LastIndex(newprefix[1], "/")
+				i := strings.LastIndex(kelime, "/")
 				klasor = kelime[:i]
 				kok = kelime[(i + 1):]
 
@@ -229,14 +244,13 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 
 	gorulenDir := map[string]bool{}
-	var isGirdiDir []bool
+
 	// aday havuzu oluşturma döngüsü
 	for i := 0; i < len(adayhavuzu); i++ {
 		girdi, _ := os.ReadDir(adayhavuzu[i])
 		for j := 0; j < len(girdi); j++ {
 			if !gorulen[girdi[j].Name()] {
 				builtinler = append(builtinler, girdi[j].Name())
-				isGirdiDir = append(isGirdiDir, girdi[j].IsDir())
 				if girdi[j].IsDir() {
 					gorulenDir[girdi[j].Name()] = true
 				}
