@@ -200,7 +200,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			//newerprefix := strings.TrimPrefix(prefix, "cat ")
 			if strings.ContainsAny(prefix, "/") {
 				toknewprefix := filepathtokenizer(newprefix[1])
-				newprefix[1] = toknewprefix[len(toknewprefix)-1]
+				if toknewprefix[len(toknewprefix)-1] != "" {
+					newprefix[1] = toknewprefix[len(toknewprefix)-1]
+				} else {
+					toknewprefix = toknewprefix[:(len(toknewprefix) - 1)]
+				}
 			}
 			prefix = strings.TrimSpace(newprefix[1])
 			bltmiwdmi = true
@@ -224,7 +228,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 	var adayhavuzu []string
 	if bltmiwdmi {
-		adayhavuzu = klasorler
+		adayhavuzu = suanwd
 	} else {
 		adayhavuzu = klasorler
 	}
