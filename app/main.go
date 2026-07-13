@@ -283,6 +283,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			} else {
 				sira = sira + "/"
 			}
+			if !gorulenDir[builtinler[i]] {
+				//sira = sira + " " // boşluk ekledik
+			} else {
+				builtinler[i] = builtinler[i] + "/"
+			}
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
 			eslesenler = append(eslesenler, builtinler[i])
 		}
