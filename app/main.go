@@ -188,6 +188,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var eslesenler []string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
 
+	if strings.HasPrefix(prefix, "cat ") {
+		newprefix := strings.TrimPrefix(prefix, "cat ")
+		prefix = newprefix
+	}
+
 	if prefix != b.oncekiPrefix {
 		b.tabSayisi = 0 // yeni yazı → sıfırla
 		b.oncekiPrefix = prefix
