@@ -188,11 +188,13 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var eslesenler []string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
 
-	newprefix := tokenci(prefix)
+	var newprefix = tokenci(prefix)
 
-	if newprefix[0] != "" && newprefix[1] != "" {
-		newerprefix := strings.TrimPrefix(prefix, "cat ")
-		prefix = strings.TrimSpace(newerprefix)
+	if len(newprefix) > 1 {
+		if newprefix[0] != "" && newprefix[1] != "" {
+			//newerprefix := strings.TrimPrefix(prefix, "cat ")
+			prefix = strings.TrimSpace(newprefix[1])
+		}
 	}
 
 	if prefix != b.oncekiPrefix {
