@@ -245,7 +245,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		for i := 0; i < len(kuyruk[1:]); i++ {
 
 			for j := 0; j < len(kuyruk); j++ {
-				if !strings.HasPrefix(strings.TrimSpace(kuyruk[j]), lcp) {
+				for !strings.HasPrefix(strings.TrimSpace(kuyruk[j]), lcp) {
 					lcp = lcp[:len(lcp)-1]
 					if lcp == "" {
 						break
