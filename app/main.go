@@ -192,7 +192,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	if newprefix[0] != "" && newprefix[1] != "" {
 		newerprefix := strings.TrimPrefix(prefix, "cat ")
-		prefix = newerprefix
+		prefix = strings.TrimSpace(newerprefix)
 	}
 
 	if prefix != b.oncekiPrefix {
