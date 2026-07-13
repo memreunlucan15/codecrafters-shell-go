@@ -223,7 +223,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 
 	for i := 0; i < len(adayhavuzu); i++ {
-		girdi, _ := os.ReadDir(klasorler[i])
+		girdi, _ := os.ReadDir(adayhavuzu[i])
 		for j := 0; j < len(girdi); j++ {
 			if !gorulen[girdi[j].Name()] {
 				builtinler = append(builtinler, girdi[j].Name())
