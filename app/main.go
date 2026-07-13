@@ -187,13 +187,16 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var sira string
 	var eslesenler []string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
-
+	var suanwd, _ = os.Getwd()
+	wddosyalar := filepath.SplitList(os.Getenv(suanwd))
 	var newprefix = tokenci(prefix)
+	var bltmiwdmi bool
 
 	if len(newprefix) > 1 {
 		if newprefix[0] != "" && newprefix[1] != "" {
 			//newerprefix := strings.TrimPrefix(prefix, "cat ")
 			prefix = strings.TrimSpace(newprefix[1])
+			bltmiwdmi = true
 		}
 	}
 
@@ -212,8 +215,14 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			gorulen[bizimbuiltinler[i]] = true
 		}
 	}
+	var adayhavuzu []string
+	if bltmiwdmi {
+		adayhavuzu = wddosyalar
+	} else {
+		adayhavuzu = klasorler
+	}
 
-	for i := 0; i < len(klasorler); i++ {
+	for i := 0; i < len(adayhavuzu); i++ {
 		girdi, _ := os.ReadDir(klasorler[i])
 		for j := 0; j < len(girdi); j++ {
 			if !gorulen[girdi[j].Name()] {
@@ -222,6 +231,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			}
 		}
 	}
+
 	sort.Strings(builtinler)
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
