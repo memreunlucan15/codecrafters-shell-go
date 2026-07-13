@@ -228,6 +228,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		adayhavuzu = klasorler
 	}
 
+	gorulenDir := map[string]bool{}
 	var isGirdiDir []bool
 	// aday havuzu oluşturma döngüsü
 	for i := 0; i < len(adayhavuzu); i++ {
@@ -236,6 +237,9 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			if !gorulen[girdi[j].Name()] {
 				builtinler = append(builtinler, girdi[j].Name())
 				isGirdiDir = append(isGirdiDir, girdi[j].IsDir())
+				if girdi[j].IsDir() {
+					gorulenDir[girdi[j].Name()] = true
+				}
 				gorulen[girdi[j].Name()] = true
 			}
 		}
@@ -260,7 +264,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		var siraBuiltin = builtinler[i]
 		if sonuc {
 			sira = siraBuiltin[len(prefix):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
-			if !isGirdiDir[i] {
+			if !gorulenDir[builtinler[i]] {
 				sira = sira + " " // boşluk ekledik
 			} else {
 				sira = sira + "/"
