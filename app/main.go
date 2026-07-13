@@ -211,7 +211,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	klasor = "."
 	if len(newprefix) > 1 {
-		if newprefix[0] != "" && newprefix[1] != "" {
+		if newprefix[0] != "" {
 
 			if strings.Contains(prefix, "/") {
 				kelime := newprefix[len(newprefix)-1]
