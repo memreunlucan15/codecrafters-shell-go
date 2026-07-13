@@ -204,6 +204,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 					newprefix[1] = toknewprefix[len(toknewprefix)-1]
 				} else {
 					toknewprefix = toknewprefix[:(len(toknewprefix) - 1)]
+					newprefix[1] = toknewprefix[len(toknewprefix)-1]
 				}
 			}
 			prefix = strings.TrimSpace(newprefix[1])
