@@ -195,8 +195,6 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var newprefix = tokenci(prefix)
 	var bltmiwdmi bool
 
-	prefixsfx := prefix
-
 	if len(newprefix) > 1 {
 		if newprefix[0] != "" && newprefix[1] != "" {
 			//newerprefix := strings.TrimPrefix(prefix, "cat ")
@@ -204,7 +202,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 				toknewprefix := filepathtokenizer(newprefix[1])
 				newprefix[1] = toknewprefix[len(toknewprefix)-1]
 			}
-			prefixsfx = strings.TrimSpace(newprefix[1])
+			prefix = strings.TrimSpace(newprefix[1])
 			bltmiwdmi = true
 		}
 	}
@@ -226,7 +224,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 	var adayhavuzu []string
 	if bltmiwdmi {
-		adayhavuzu = suanwd
+		adayhavuzu = klasorler
 	} else {
 		adayhavuzu = klasorler
 	}
@@ -240,16 +238,13 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			}
 		}
 	}
-	siraBuiltindskn := prefix
-	if bltmiwdmi {
-		siraBuiltindskn = prefixsfx
-	}
+
 	sort.Strings(builtinler)
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
 		if sonuc {
-			sira = siraBuiltin[len(siraBuiltindskn):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
+			sira = siraBuiltin[len(prefix):]          // adaydaki prefixten fazla olan karakterleri sira ya atadık
 			sira = sira + " "                         // boşluk ekledik
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
 			eslesenler = append(eslesenler, builtinler[i])
