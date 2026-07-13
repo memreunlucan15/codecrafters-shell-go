@@ -187,8 +187,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var sira string
 	var eslesenler []string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
-	var suanwd, _ = os.Getwd()
-	wddosyalar := filepath.SplitList(os.Getenv(suanwd))
+
+	var suanwd []string
+	suanwde, _ := os.Getwd()
+	suanwd = append(suanwd, suanwde)
+
 	var newprefix = tokenci(prefix)
 	var bltmiwdmi bool
 
@@ -217,7 +220,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 	var adayhavuzu []string
 	if bltmiwdmi {
-		adayhavuzu = wddosyalar
+		adayhavuzu = suanwd
 	} else {
 		adayhavuzu = klasorler
 	}
