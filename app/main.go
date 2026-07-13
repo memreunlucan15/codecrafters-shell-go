@@ -218,12 +218,15 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	gorulen := map[string]bool{}
 
-	for i := 0; i < len(bizimbuiltinler); i++ {
-		if !gorulen[bizimbuiltinler[i]] {
-			builtinler = append(builtinler, bizimbuiltinler[i])
-			gorulen[bizimbuiltinler[i]] = true
+	if !bltmiwdmi {
+		for i := 0; i < len(bizimbuiltinler); i++ {
+			if !gorulen[bizimbuiltinler[i]] {
+				builtinler = append(builtinler, bizimbuiltinler[i])
+				gorulen[bizimbuiltinler[i]] = true
+			}
 		}
 	}
+
 	var adayhavuzu []string
 	if bltmiwdmi {
 		adayhavuzu = append(adayhavuzu, klasor)
