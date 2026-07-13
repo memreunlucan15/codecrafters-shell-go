@@ -188,24 +188,21 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var eslesenler []string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
 
-	var suanwd []string
-	suanwde, _ := os.Getwd()
-	suanwd = append(suanwd, suanwde)
-
 	var newprefix = tokenci(prefix)
-	var bltmiwdmi bool
+	var bltmiwdmi bool // builtin mi wd mi
 
+	var klasor string
+	var kok string
 	if len(newprefix) > 1 {
 		if newprefix[0] != "" && newprefix[1] != "" {
-			//newerprefix := strings.TrimPrefix(prefix, "cat ")
 			if strings.ContainsAny(prefix, "/") {
-				toknewprefix := filepathtokenizer(newprefix[1])
-				if toknewprefix[len(toknewprefix)-1] != "" {
-					newprefix[1] = toknewprefix[len(toknewprefix)-1]
-				} else {
-					toknewprefix = toknewprefix[:(len(toknewprefix) - 1)]
-					newprefix[1] = toknewprefix[len(toknewprefix)-1]
-				}
+				kelime := newprefix[len(newprefix)-1]
+				i := strings.LastIndex(newprefix[1], "/")
+				klasor = kelime[:i]
+				kok = kelime[(i + 1):]
+
+				newprefix[1] = kok
+
 			}
 			prefix = strings.TrimSpace(newprefix[1])
 			bltmiwdmi = true
@@ -229,7 +226,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 	var adayhavuzu []string
 	if bltmiwdmi {
-		adayhavuzu = suanwd
+		adayhavuzu = append(adayhavuzu, klasor)
 	} else {
 		adayhavuzu = klasorler
 	}
@@ -302,25 +299,4 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	return oneriler, len(prefix) // önerileri ve prefixin uzunluğunu geri döndürdük
 
-}
-
-func filepathtokenizer(line string) []string {
-
-	var sonuc []string
-
-	current := ""
-	for i := 0; i < len(line); i++ {
-		c := line[i]
-
-		if c == '/' {
-			if current != "" {
-				sonuc = append(sonuc, current)
-				current = ""
-			}
-		} else {
-			current += string(c)
-		}
-	}
-	sonuc = append(sonuc, current)
-	return sonuc
 }
