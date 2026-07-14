@@ -135,7 +135,7 @@ func main() {
 					if !strings.Contains(regcomm[yeri], tokens[2]) {
 						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 					} else {
-						fmt.Fprintln(outErr, tokens[0]+" "+tokens[1]+"'"+regscript[yeri]+"'"+regcomm[yeri])
+						fmt.Fprintln(outErr, tokens[0]+" "+tokens[1]+" "+"'"+regscript[yeri]+"' "+regcomm[yeri])
 					}
 				}
 			default:
