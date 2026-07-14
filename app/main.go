@@ -209,6 +209,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var klasor string
 	var kok string
 
+	fullprefix := prefix
+
 	klasor = "."
 	if len(newprefix) > 1 {
 		if newprefix[0] != "" {
@@ -226,8 +228,6 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			bltmiwdmi = true
 		}
 	}
-
-	fullprefix := prefix
 
 	if prefix != b.oncekiPrefix {
 		b.tabSayisi = 0 // yeni yazı → sıfırla
