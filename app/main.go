@@ -218,11 +218,12 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			if strings.Contains(prefix, "/") {
 				kelime := newprefix[len(newprefix)-1]
 				i := strings.LastIndex(kelime, "/")
-				klasor = kelime[:i]
-				kok = kelime[(i + 1):]
+				if i > (-1) {
+					klasor = kelime[:i]
+					kok = kelime[(i + 1):]
 
-				newprefix[len(newprefix)-1] = kok
-
+					newprefix[len(newprefix)-1] = kok
+				}
 			}
 			prefix = strings.TrimSpace(newprefix[len(newprefix)-1])
 			bltmiwdmi = true
