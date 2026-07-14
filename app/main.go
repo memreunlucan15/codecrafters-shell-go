@@ -119,7 +119,7 @@ func main() {
 				}
 			case "complete":
 				if tokens[1] == "-p" {
-					fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion spesification")
+					fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 				}
 			default:
 				{
