@@ -134,10 +134,14 @@ func main() {
 							}
 						}
 					}
-					if !strings.Contains(regcomm[yeri], tokens[2]) {
-						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+					if len(regcomm) != 0 {
+						if !strings.Contains(regcomm[yeri], tokens[2]) {
+							fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+						} else {
+							fmt.Fprintln(outErr, tokens[0]+" "+"-C"+" "+"'"+regscript[yeri]+"' "+regcomm[yeri])
+						}
 					} else {
-						fmt.Fprintln(outErr, tokens[0]+" "+"-C"+" "+"'"+regscript[yeri]+"' "+regcomm[yeri])
+						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 					}
 				}
 			default:
