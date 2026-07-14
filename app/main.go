@@ -221,7 +221,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 				klasor = kelime[:i]
 				kok = kelime[(i + 1):]
 
-				newprefix[1] = kok
+				newprefix[len(newprefix)-1] = kok
 
 			}
 			prefix = strings.TrimSpace(newprefix[len(newprefix)-1])
