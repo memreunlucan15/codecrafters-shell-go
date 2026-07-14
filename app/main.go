@@ -15,6 +15,9 @@ import (
 // Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
 var _ = fmt.Print
 
+var regcomm []string
+var regscript []string
+
 func main() {
 
 	//rl, err := readline.New("$ ")
@@ -118,8 +121,16 @@ func main() {
 					fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
 				}
 			case "complete":
-				if tokens[1] == "-p" {
-					fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+				if tokens[1] == "-C" {
+					regcomm = append(regcomm, tokens[3])
+					regscript = append(regcomm, tokens[2])
+
+				} else if tokens[1] == "-p" {
+					if !strings.Contains(regcomm[len(regcomm)-1], tokens[2]) {
+						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+					} else {
+						fmt.Fprintln(outErr, tokens[0]+" "+tokens[1]+"'"+regscript[len(regscript)-1]+"'"+regcomm[len(regcomm)-1])
+					}
 				}
 			default:
 				{
