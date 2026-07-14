@@ -227,6 +227,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		}
 	}
 
+	fullprefix := prefix
+
 	if prefix != b.oncekiPrefix {
 		b.tabSayisi = 0 // yeni yazı → sıfırla
 		b.oncekiPrefix = prefix
@@ -333,7 +335,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		fmt.Print("\n")
 		fmt.Print(strings.Join(eslesenler, "  "))
 		fmt.Print("\n")
-		fmt.Print("$ " + prefix)
+		fmt.Print("$ " + fullprefix)
 		return nil, len(prefix)
 	}
 
