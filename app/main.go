@@ -126,10 +126,16 @@ func main() {
 					regscript = append(regcomm, tokens[2])
 
 				} else if tokens[1] == "-p" {
-					if !strings.Contains(regcomm[len(regcomm)-1], tokens[2]) {
+					yeri := 0
+					for i := 0; i < len(regcomm); i++ {
+						if strings.Contains(regcomm[i], tokens[2]) {
+							yeri = i
+						}
+					}
+					if !strings.Contains(regcomm[yeri], tokens[2]) {
 						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 					} else {
-						fmt.Fprintln(outErr, tokens[0]+" "+tokens[1]+"'"+regscript[len(regscript)-1]+"'"+regcomm[len(regcomm)-1])
+						fmt.Fprintln(outErr, tokens[0]+" "+tokens[1]+"'"+regscript[yeri]+"'"+regcomm[yeri])
 					}
 				}
 			default:
