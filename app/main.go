@@ -74,7 +74,7 @@ func main() {
 				{
 
 					switch tokens[1] { // type sonrası builtin komut kontrolü
-					case "exit", "echo", "type", "pwd", "cd":
+					case "exit", "echo", "type", "pwd", "cd", "complete":
 						fmt.Fprintln(out, tokens[1]+" is a shell builtin")
 					default:
 
