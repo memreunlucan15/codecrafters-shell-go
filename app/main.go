@@ -123,7 +123,7 @@ func main() {
 			case "complete":
 				if tokens[1] == "-C" {
 					regcomm = append(regcomm, tokens[3])
-					regscript = append(regcomm, tokens[2])
+					regscript = append(regscript, tokens[2])
 
 				} else if tokens[1] == "-p" {
 					yeri := 0
