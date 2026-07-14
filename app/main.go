@@ -224,7 +224,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 				newprefix[1] = kok
 
 			}
-			prefix = strings.TrimSpace(newprefix[1])
+			prefix = strings.TrimSpace(newprefix[len(newprefix)-1])
 			bltmiwdmi = true
 		}
 	}
