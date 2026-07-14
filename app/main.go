@@ -127,9 +127,11 @@ func main() {
 
 				} else if tokens[1] == "-p" {
 					yeri := 0
-					for i := 0; i < len(regcomm); i++ {
-						if strings.Contains(regcomm[i], tokens[2]) {
-							yeri = i
+					if len(regcomm) != 0 {
+						for i := 0; i < len(regcomm); i++ {
+							if strings.Contains(regcomm[i], tokens[2]) {
+								yeri = i
+							}
 						}
 					}
 					if !strings.Contains(regcomm[yeri], tokens[2]) {
