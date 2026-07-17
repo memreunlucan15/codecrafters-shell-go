@@ -273,11 +273,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 	b.tabSayisi++
 
-	_, varMi := kayitlar[prefix]
+	script, varMi := kayitlar[tokenprefix[0]]
 	if varMi {
-		if _, err := exec.LookPath(kayitlar[prefix]); err == nil { // Path kontrolü
+		if path, err := exec.LookPath(script); err == nil { // Path kontrolü
 
-			var prog = exec.Command(kayitlar[prefix])
+			var prog = exec.Command(path)
 			//prog.Run()
 			prog_output, _ := prog.Output()
 			cikti := strings.TrimSpace(string(prog_output))
