@@ -280,7 +280,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			var prog = exec.Command(path)
 			//prog.Run()
 			prog_output, _ := prog.Output()
-			cikti := string(prog_output)
+			cikti := strings.TrimSpace(string(prog_output))
+			cikti = cikti + " "
 			oneriler = append(oneriler, []rune(cikti))
 			return oneriler, len(prefix)
 		}
