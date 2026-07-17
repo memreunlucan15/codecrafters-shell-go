@@ -280,7 +280,13 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			var prog *exec.Cmd
 
 			if len(tokenprefix) > 2 {
-				prog = exec.Command(path, tokenprefix[0], tokenprefix[2], tokenprefix[1])
+				argv := []string{
+					tokenprefix[0],
+					tokenprefix[len(tokenprefix)-1],
+					tokenprefix[len(tokenprefix)-2],
+				}
+
+				prog = exec.Command(path, argv[0], argv[1], argv[2])
 			} else {
 				prog = exec.Command(path, tokenprefix[0], "", "")
 			}
