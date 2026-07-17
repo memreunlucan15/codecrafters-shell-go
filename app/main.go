@@ -277,8 +277,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	if varMi {
 		if path, err := exec.LookPath(script); err == nil { // Path kontrolü
 			var prog *exec.Cmd
+
 			if len(tokenprefix) > 2 {
 				prog = exec.Command(path, tokenprefix[0], tokenprefix[2], tokenprefix[1])
+				prog.Env = append(prog.Environ(), "COMP_LINE="+fullprefix)
+				prog.Env = append(prog.Environ(), "COMP_POINT="+string(len(fullprefix)))
 			} else {
 				prog = exec.Command(path)
 			}
