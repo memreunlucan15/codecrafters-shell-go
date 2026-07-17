@@ -293,7 +293,12 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			prog.Env = append(prog.Environ(), "COMP_LINE="+fullprefix)
 			prog.Env = append(prog.Environ(), "COMP_POINT="+strconv.Itoa(len(fullprefix)))
 			prog_output, _ = prog.Output()
-			if len(prog_output) > 1 {
+
+			conv := make([]string, len(prog_output))
+			for i, b := range prog_output {
+				conv[i] = string(b)
+			}
+			if len(conv) > 1 {
 				completer_script_mc = true
 			} else {
 
