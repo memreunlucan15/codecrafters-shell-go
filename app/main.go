@@ -304,7 +304,6 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 					return oneriler, len(prefix)
 				} else {
 					fmt.Print("\x07")
-					fmt.Print("fgrgrh")
 					return nil, len(prefix)
 				}
 			}
@@ -365,7 +364,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	for i := 0; i < len(builtinler); i++ {
 		sonuc = strings.HasPrefix(builtinler[i], prefix) // havuzdaki adaylar prefix ile mi başlıyor
 		var siraBuiltin = builtinler[i]
-		if sonuc {
+		if sonuc || completer_script_mc {
 			sira = siraBuiltin[len(prefix):] // adaydaki prefixten fazla olan karakterleri sira ya atadık
 			if !gorulenDir[builtinler[i]] {
 				sira = sira + " " // boşluk ekledik
