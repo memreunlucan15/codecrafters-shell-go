@@ -242,6 +242,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var bltmiwdmi bool           // builtin mi wd mi
 	var completer_script_mc bool // cs'nin multiple candidate'e sahip mi
 	var prog_output []byte       // cs outputu
+	var prog_output_s []string
 
 	var klasor string
 	var kok string
@@ -293,8 +294,8 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			prog.Env = append(prog.Environ(), "COMP_LINE="+fullprefix)
 			prog.Env = append(prog.Environ(), "COMP_POINT="+strconv.Itoa(len(fullprefix)))
 			prog_output, _ = prog.Output()
-			if len(prog_output) > 1 {
-				fmt.Print(len(prog_output))
+			prog_output_s := strings.Fields(string(prog_output)) // burada çıktıyı adam ediyoruz
+			if len(prog_output_s) > 1 {
 				completer_script_mc = true
 			} else {
 
@@ -348,12 +349,9 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		}
 
 	} else {
-
-		conv := make([]string, len(prog_output))
-		for i, b := range prog_output {
-			conv[i] = string(b)
-			builtinler = append(builtinler, conv[i])
-			oneriler = append(oneriler, []rune(conv[i]))
+		for i := 0; i < len(prog_output_s); i++ {
+			builtinler = append(builtinler, prog_output_s[i])
+			oneriler = append(oneriler, []rune(prog_output_s[i]))
 		}
 
 	}
