@@ -138,6 +138,12 @@ func main() {
 							} else {
 								continue
 							}
+						case "-r":
+							if len(tokens) > 2 {
+								delete(kayitlar, tokens[2])
+							} else {
+								continue
+							}
 						default:
 							if len(tokens) > 2 {
 								fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
