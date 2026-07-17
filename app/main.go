@@ -43,6 +43,7 @@ func main() {
 		var outErr = os.Stderr
 
 		if tokens[len(tokens)-1] == "&" {
+			tokens = tokens[:len(tokens)-2]
 			prog := exec.Command(tokens[0], tokens[1])
 
 			err := prog.Start()
@@ -51,7 +52,7 @@ func main() {
 			job_no := "[1]"
 			job_pid := strconv.Itoa(prog.Process.Pid)
 			fmt.Println(job_no + " " + job_pid)
-			fmt.Println("$ ")
+			fmt.Print("$ ")
 		}
 
 		switch redir {
