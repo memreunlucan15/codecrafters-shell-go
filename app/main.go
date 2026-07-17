@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/chzyer/readline"
@@ -281,7 +282,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			if len(tokenprefix) > 2 {
 				prog = exec.Command(path, tokenprefix[0], tokenprefix[2], tokenprefix[1])
 				prog.Env = append(prog.Environ(), "COMP_LINE="+fullprefix)
-				prog.Env = append(prog.Environ(), "COMP_POINT="+string(len(fullprefix)))
+				prog.Env = append(prog.Environ(), "COMP_POINT="+strconv.Itoa(len(fullprefix)))
 			} else {
 				prog = exec.Command(path)
 			}
