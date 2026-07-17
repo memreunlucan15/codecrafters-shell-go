@@ -298,16 +298,16 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			if len(prog_output_s) > 1 {
 				completer_script_mc = true
 			} else {
-				/*
-					cikti := strings.TrimSpace(string(prog_output))
-					if cikti != "" {
-						cikti = cikti[len(prefix):] + " "
-						oneriler = append(oneriler, []rune(cikti))
-						return oneriler, len(prefix)
-					} else {
-						fmt.Print("\x07")
-						return nil, len(prefix)
-					}*/
+
+				cikti := strings.TrimSpace(string(prog_output))
+				if cikti != "" {
+					cikti = cikti[len(prefix):] + " "
+					oneriler = append(oneriler, []rune(cikti))
+					return oneriler, len(prefix)
+				} else {
+					fmt.Print("\x07")
+					return nil, len(prefix)
+				}
 			}
 		}
 	}
