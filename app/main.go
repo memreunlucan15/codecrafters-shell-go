@@ -294,7 +294,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			prog.Env = append(prog.Environ(), "COMP_LINE="+fullprefix)
 			prog.Env = append(prog.Environ(), "COMP_POINT="+strconv.Itoa(len(fullprefix)))
 			prog_output, _ = prog.Output()
-			prog_output_s := strings.Fields(string(prog_output)) // burada çıktıyı adam ediyoruz
+			prog_output_s = strings.Fields(string(prog_output)) // burada çıktıyı adam ediyoruz
 			if len(prog_output_s) > 1 {
 				completer_script_mc = true
 			} else {
@@ -351,7 +351,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	} else {
 		for i := 0; i < len(prog_output_s); i++ {
 			builtinler = append(builtinler, prog_output_s[i])
-			oneriler = append(oneriler, []rune(prog_output_s[i]))
+			//oneriler = append(oneriler, []rune(prog_output_s[i]))
 		}
 
 	}
@@ -369,10 +369,6 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 				sira = sira + " " // boşluk ekledik
 			} else {
 				sira = sira + "/"
-			}
-			if !gorulenDir[builtinler[i]] {
-				//sira = sira + " " // boşluk ekledik
-			} else {
 				builtinler[i] = builtinler[i] + "/"
 			}
 			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
