@@ -15,8 +15,6 @@ import (
 
 var _ = fmt.Print
 
-var regcomm []string
-var regscript []string
 var kayitlar = map[string]string{}
 
 func main() {
@@ -241,7 +239,9 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
 
 	var tokenprefix = tokenci(prefix)
-	var bltmiwdmi bool // builtin mi wd mi
+	var bltmiwdmi bool           // builtin mi wd mi
+	var completer_script_mc bool // cs'nin multiple candidate'e sahip mi
+	var prog_output []byte       // cs outputu
 
 	var klasor string
 	var kok string
@@ -286,16 +286,20 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			} else {
 				prog = exec.Command(path)
 			}
-			prog_output, _ := prog.Output()
-
-			cikti := strings.TrimSpace(string(prog_output))
-			if cikti != "" {
-				cikti = cikti[len(prefix):] + " "
-				oneriler = append(oneriler, []rune(cikti))
-				return oneriler, len(prefix)
+			prog_output, _ = prog.Output()
+			if len(prog_output) > 1 {
+				completer_script_mc = true
 			} else {
-				fmt.Print("\x07")
-				return nil, len(prefix)
+
+				cikti := strings.TrimSpace(string(prog_output))
+				if cikti != "" {
+					cikti = cikti[len(prefix):] + " "
+					oneriler = append(oneriler, []rune(cikti))
+					return oneriler, len(prefix)
+				} else {
+					fmt.Print("\x07")
+					return nil, len(prefix)
+				}
 			}
 		}
 	}
@@ -303,7 +307,13 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	gorulen := map[string]bool{}
 
 	var adayhavuzu []string
-	if bltmiwdmi {
+	if completer_script_mc {
+		conv := make([]string, len(prog_output))
+		for i, j := range prog_output {
+			conv[i] = string(j)
+		}
+		adayhavuzu = conv
+	} else if bltmiwdmi {
 		adayhavuzu = append(adayhavuzu, klasor)
 	} else {
 		adayhavuzu = klasorler
