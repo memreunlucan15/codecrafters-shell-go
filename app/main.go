@@ -281,11 +281,11 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 			if len(tokenprefix) > 2 {
 				prog = exec.Command(path, tokenprefix[0], tokenprefix[2], tokenprefix[1])
-				prog.Env = append(prog.Environ(), "COMP_LINE="+fullprefix)
-				prog.Env = append(prog.Environ(), "COMP_POINT="+strconv.Itoa(len(fullprefix)))
 			} else {
 				prog = exec.Command(path)
 			}
+			prog.Env = append(prog.Environ(), "COMP_LINE="+fullprefix)
+			prog.Env = append(prog.Environ(), "COMP_POINT="+strconv.Itoa(len(fullprefix)))
 			prog_output, _ = prog.Output()
 			if len(prog_output) > 1 {
 				completer_script_mc = true
