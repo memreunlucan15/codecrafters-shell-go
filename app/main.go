@@ -119,40 +119,43 @@ func main() {
 				}
 			case "complete":
 				{
-					switch tokens[1] {
-					case "-C":
-						if len(tokens) > 3 {
-							kayitlar[tokens[3]] = tokens[2]
-							regcomm = append(regcomm, tokens[3])
-							regscript = append(regscript, tokens[2])
-						} else {
-							continue
-						}
-					case "-p":
-						if len(tokens) > 2 {
-							script, var_mi := kayitlar[tokens[2]]
+					if len(tokens) > 1 {
+						switch tokens[1] {
+						case "-C":
+							if len(tokens) > 3 {
+								kayitlar[tokens[3]] = tokens[2]
+							} else {
+								continue
+							}
+						case "-p":
+							if len(tokens) > 2 {
+								script, var_mi := kayitlar[tokens[2]]
 
-							if !var_mi {
+								if !var_mi {
+									fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+								} else {
+									fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
+								}
+							} else {
+								continue
+							}
+						default:
+							if len(tokens) > 2 {
 								fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 							} else {
-								fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
+								continue
 							}
-						} else {
-							continue
 						}
-					default:
-						if len(tokens) > 2 {
-							fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
-						} else {
-							continue
-						}
-					}
 
+					} else {
+						continue
+					}
 				}
 			default:
 				{
 					fmt.Fprintln(outErr, command+": command not found")
 				}
+
 			}
 		}
 	}
@@ -236,7 +239,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	var eslesenler []string
 	klasorler := filepath.SplitList(os.Getenv("PATH"))
 
-	var newprefix = tokenci(prefix)
+	var tokenprefix = tokenci(prefix)
 	var bltmiwdmi bool // builtin mi wd mi
 
 	var klasor string
@@ -245,20 +248,20 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	fullprefix := prefix
 
 	klasor = "."
-	if len(newprefix) > 1 {
-		if newprefix[0] != "" {
+	if len(tokenprefix) > 1 {
+		if tokenprefix[0] != "" {
 
 			if strings.Contains(prefix, "/") {
-				kelime := newprefix[len(newprefix)-1]
+				kelime := tokenprefix[len(tokenprefix)-1]
 				i := strings.LastIndex(kelime, "/")
 				if i > (-1) {
 					klasor = kelime[:i]
 					kok = kelime[(i + 1):]
 
-					newprefix[len(newprefix)-1] = kok
+					tokenprefix[len(tokenprefix)-1] = kok
 				}
 			}
-			prefix = strings.TrimSpace(newprefix[len(newprefix)-1])
+			prefix = strings.TrimSpace(tokenprefix[len(tokenprefix)-1])
 			bltmiwdmi = true
 		}
 	}
@@ -269,6 +272,19 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 
 	b.tabSayisi++
+
+	_, varMi := kayitlar[prefix]
+	if varMi {
+		if _, err := exec.LookPath(kayitlar[prefix]); err == nil { // Path kontrolü
+
+			var prog = exec.Command(kayitlar[prefix])
+			//prog.Run()
+			prog_output, _ := prog.Output()
+			cikti := string(prog_output)
+			oneriler = append(oneriler, []rune(cikti))
+			return oneriler, len(prefix)
+		}
+	}
 
 	gorulen := map[string]bool{}
 
@@ -295,7 +311,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		}
 	}
 
-	// builtinlere echo-exit ekleme kadar noktası
+	// builtinlere echo-exit ekleme karar noktası
 	if !bltmiwdmi {
 		for i := 0; i < len(bizimbuiltinler); i++ {
 			if !gorulen[bizimbuiltinler[i]] {
