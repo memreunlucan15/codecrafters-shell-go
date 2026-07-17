@@ -276,12 +276,12 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	script, varMi := kayitlar[tokenprefix[0]] // mapteki değere tekrar tekrar bakmamak için değeri scripte atadık
 	if varMi {
 		if path, err := exec.LookPath(script); err == nil { // Path kontrolü
-
+			var prog *exec.Cmd
 			if len(tokenprefix) > 2 {
-				_ = exec.Command(path, tokenprefix[0], tokenprefix[2], tokenprefix[1])
-				return nil, len(prefix)
+				prog = exec.Command(path, tokenprefix[0], tokenprefix[2], tokenprefix[1])
+			} else {
+				prog = exec.Command(path)
 			}
-			var prog = exec.Command(path)
 			prog_output, _ := prog.Output()
 
 			cikti := strings.TrimSpace(string(prog_output))
