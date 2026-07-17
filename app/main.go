@@ -279,11 +279,16 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 			var prog = exec.Command(path)
 			//prog.Run()
-			prog_output, _ := prog.Output()
-			cikti := strings.TrimSpace(string(prog_output))
-			cikti = cikti + " "
-			oneriler = append(oneriler, []rune(cikti))
-			return oneriler, len(prefix)
+			prog_output, err := prog.Output()
+			if err == nil {
+				cikti := strings.TrimSpace(string(prog_output))
+				cikti = cikti + " "
+				oneriler = append(oneriler, []rune(cikti))
+				return oneriler, len(prefix)
+			} else {
+				fmt.Print("\x07")
+				return nil, len(prefix)
+			}
 		}
 	}
 
