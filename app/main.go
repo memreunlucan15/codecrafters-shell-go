@@ -279,7 +279,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		if path, err := exec.LookPath(script); err == nil { // Path kontrolü
 			var prog *exec.Cmd
 
-			if len(tokenprefix) > 2 {
+			if len(tokenprefix) > 1 {
 				argv := []string{
 					tokenprefix[0],
 					tokenprefix[len(tokenprefix)-1],
