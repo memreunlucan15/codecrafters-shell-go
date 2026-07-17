@@ -12,15 +12,14 @@ import (
 	"github.com/chzyer/readline"
 )
 
-// Ensures gofmt doesn't remove the "fmt" import in stage 1 (feel free to remove this!)
 var _ = fmt.Print
 
 var regcomm []string
 var regscript []string
+var kayitlar = map[string]string{}
 
 func main() {
 
-	//rl, err := readline.New("$ ")
 	rl, err := readline.NewEx(&readline.Config{
 		Prompt:       "$ ",
 		AutoComplete: &benimCompleter{},
@@ -29,8 +28,6 @@ func main() {
 		panic(err)
 	}
 	defer rl.Close()
-
-	// TODO: Uncomment the code below to pass the first stage
 
 	for {
 
@@ -121,28 +118,36 @@ func main() {
 					fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
 				}
 			case "complete":
-				if tokens[1] == "-C" {
-					regcomm = append(regcomm, tokens[3])
-					regscript = append(regscript, tokens[2])
-
-				} else if tokens[1] == "-p" {
-					yeri := 0
-					if len(regcomm) != 0 {
-						for i := 0; i < len(regcomm); i++ {
-							if strings.Contains(regcomm[i], tokens[2]) {
-								yeri = i
-							}
+				{
+					switch tokens[1] {
+					case "-C":
+						if len(tokens) > 3 {
+							kayitlar[tokens[3]] = tokens[2]
+							regcomm = append(regcomm, tokens[3])
+							regscript = append(regscript, tokens[2])
+						} else {
+							continue
 						}
-					}
-					if len(regcomm) != 0 {
-						if !strings.Contains(regcomm[yeri], tokens[2]) {
+					case "-p":
+						if len(tokens) > 2 {
+							script, var_mi := kayitlar[tokens[2]]
+
+							if !var_mi {
+								fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+							} else {
+								fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
+							}
+						} else {
+							continue
+						}
+					default:
+						if len(tokens) > 2 {
 							fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 						} else {
-							fmt.Fprintln(outErr, tokens[0]+" "+"-C"+" "+"'"+regscript[yeri]+"' "+regcomm[yeri])
+							continue
 						}
-					} else {
-						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 					}
+
 				}
 			default:
 				{
@@ -197,16 +202,17 @@ func isRedir(tokenized []string) int {
 	for i := 0; i < len(tokenized); i++ {
 		c := tokenized[i]
 
-		if c == ">" || c == "1>" {
+		switch c {
+		case ">", "1>":
 			durum = 1
 			return durum
-		} else if c == "2>" {
+		case "2>":
 			durum = 2
 			return durum
-		} else if c == ">>" || c == "1>>" {
+		case ">>", "1>>":
 			durum = 3
 			return durum
-		} else if c == "2>>" {
+		case "2>>":
 			durum = 4
 			return durum
 		}
