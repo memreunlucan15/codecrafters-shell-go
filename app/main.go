@@ -294,6 +294,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			prog.Env = append(prog.Environ(), "COMP_POINT="+strconv.Itoa(len(fullprefix)))
 			prog_output, _ = prog.Output()
 			if len(prog_output) > 1 {
+				fmt.Print("trve")
 				completer_script_mc = true
 			} else {
 
