@@ -73,7 +73,7 @@ func main() {
 				{
 
 					switch tokens[1] { // type sonrası builtin komut kontrolü
-					case "exit", "echo", "type", "pwd", "cd", "complete":
+					case "exit", "echo", "type", "pwd", "cd", "complete", "jobs":
 						fmt.Fprintln(out, tokens[1]+" is a shell builtin")
 					default:
 
@@ -155,6 +155,10 @@ func main() {
 					} else {
 						continue
 					}
+				}
+			case "jobs":
+				{
+					fmt.Fprintln(out, "")
 				}
 			default:
 				{
@@ -357,7 +361,6 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	} else {
 		for i := 0; i < len(prog_output_s); i++ {
 			builtinler = append(builtinler, prog_output_s[i])
-			//oneriler = append(oneriler, []rune(prog_output_s[i]))
 		}
 
 	}
