@@ -286,7 +286,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 
 			cikti := strings.TrimSpace(string(prog_output))
 			if cikti != "" {
-				cikti = cikti + " "
+				cikti = cikti[len(prefix):] + " "
 				oneriler = append(oneriler, []rune(cikti))
 				return oneriler, len(prefix)
 			} else {
