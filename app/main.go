@@ -311,44 +311,49 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 	}
 
 	gorulen := map[string]bool{}
+	gorulenDir := map[string]bool{}
 
 	var adayhavuzu []string
-	if completer_script_mc {
-		conv := make([]string, len(prog_output))
-		for i, j := range prog_output {
-			conv[i] = string(j)
-		}
-		adayhavuzu = conv
-	} else if bltmiwdmi {
+	if bltmiwdmi {
 		adayhavuzu = append(adayhavuzu, klasor)
 	} else {
 		adayhavuzu = klasorler
 	}
 
-	gorulenDir := map[string]bool{}
+	if !completer_script_mc {
 
-	// aday havuzu oluşturma döngüsü
-	for i := 0; i < len(adayhavuzu); i++ {
-		girdi, _ := os.ReadDir(adayhavuzu[i])
-		for j := 0; j < len(girdi); j++ {
-			if !gorulen[girdi[j].Name()] {
-				builtinler = append(builtinler, girdi[j].Name())
-				if girdi[j].IsDir() {
-					gorulenDir[girdi[j].Name()] = true
+		// aday havuzu oluşturma döngüsü
+		for i := 0; i < len(adayhavuzu); i++ {
+			girdi, _ := os.ReadDir(adayhavuzu[i])
+			for j := 0; j < len(girdi); j++ {
+				if !gorulen[girdi[j].Name()] {
+					builtinler = append(builtinler, girdi[j].Name())
+					if girdi[j].IsDir() {
+						gorulenDir[girdi[j].Name()] = true
+					}
+					gorulen[girdi[j].Name()] = true
 				}
-				gorulen[girdi[j].Name()] = true
 			}
 		}
-	}
 
-	// builtinlere echo-exit ekleme karar noktası
-	if !bltmiwdmi {
-		for i := 0; i < len(bizimbuiltinler); i++ {
-			if !gorulen[bizimbuiltinler[i]] {
-				builtinler = append(builtinler, bizimbuiltinler[i])
-				gorulen[bizimbuiltinler[i]] = true
+		// builtinlere echo-exit ekleme karar noktası
+		if !bltmiwdmi {
+			for i := 0; i < len(bizimbuiltinler); i++ {
+				if !gorulen[bizimbuiltinler[i]] {
+					builtinler = append(builtinler, bizimbuiltinler[i])
+					gorulen[bizimbuiltinler[i]] = true
+				}
 			}
 		}
+
+	} else {
+
+		conv := make([]string, len(prog_output))
+		for i, b := range prog_output {
+			conv[i] = string(b)
+			builtinler = append(builtinler, conv[i])
+		}
+
 	}
 
 	//sıralama
