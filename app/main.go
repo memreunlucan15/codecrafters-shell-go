@@ -158,7 +158,7 @@ func main() {
 				}
 			case "jobs":
 				{
-					fmt.Fprintln(out, "$ ")
+					fmt.Fprint(out, "$ ")
 				}
 			default:
 				{
