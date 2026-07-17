@@ -41,6 +41,19 @@ func main() {
 
 		var out = os.Stdout
 		var outErr = os.Stderr
+
+		if tokens[len(tokens)-1] == "&" {
+			prog := exec.Command(tokens[0], tokens[1])
+
+			err := prog.Start()
+			if err != nil {
+			}
+			job_no := "[1]"
+			job_pid := strconv.Itoa(prog.Process.Pid)
+			fmt.Println(job_no + " " + job_pid)
+			fmt.Println("$ ")
+		}
+
 		switch redir {
 		case 1:
 			f, _ := os.Create(tokens[len(tokens)-1])
@@ -158,7 +171,11 @@ func main() {
 				}
 			case "jobs":
 				{
-					fmt.Fprint(out, "$ ")
+					if len(tokens) == 1 {
+						fmt.Fprint(out, "$ ")
+					} else {
+
+					}
 				}
 			default:
 				{
