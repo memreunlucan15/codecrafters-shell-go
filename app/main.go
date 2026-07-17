@@ -352,6 +352,7 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 		for i, b := range prog_output {
 			conv[i] = string(b)
 			builtinler = append(builtinler, conv[i])
+			oneriler = append(oneriler, []rune(conv[i]))
 		}
 
 	}
@@ -375,7 +376,9 @@ func (b *benimCompleter) Do(line []rune, pos int) ([][]rune, int) {
 			} else {
 				builtinler[i] = builtinler[i] + "/"
 			}
-			oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
+			if len(oneriler) == 0 {
+				oneriler = append(oneriler, []rune(sira)) // öneriler listesine sira yı ekledik
+			}
 			eslesenler = append(eslesenler, builtinler[i])
 		}
 
