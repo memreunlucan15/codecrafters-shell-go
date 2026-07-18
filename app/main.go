@@ -57,7 +57,7 @@ func main() {
 			this_process := job_no
 			go func() {
 				_ = prog.Wait()
-				bg_job_no_and_cmd[this_process] = strings.TrimSuffix(bg_job_no_and_cmd[job_no], "Running") + "Done"
+				bg_job_no_and_cmd[this_process] = strings.TrimSuffix(bg_job_no_and_cmd[this_process], "Running") + "Done"
 			}()
 
 			job_pid := strconv.Itoa(prog.Process.Pid)
