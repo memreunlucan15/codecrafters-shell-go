@@ -191,8 +191,9 @@ func main() {
 							case (job_no - 1):
 								jm_no = 1
 							default:
-								fmt.Println("[" + strconv.Itoa(job_no) + "]" + job_marker[jm_no] + "  " + "Running                 " + bg_job_no_and_cmd[i])
+								jm_no = 0
 							}
+							fmt.Println("[" + strconv.Itoa(job_no) + "]" + job_marker[jm_no] + "  " + "Running                 " + bg_job_no_and_cmd[i])
 						}
 					}
 				}
