@@ -16,6 +16,7 @@ import (
 var _ = fmt.Print
 
 var kayitlar = map[string]string{}
+var job_no = 0
 
 func main() {
 
@@ -44,15 +45,16 @@ func main() {
 
 		if tokens[len(tokens)-1] == "&" {
 			tokens = tokens[:len(tokens)-1]
-			prog := exec.Command(tokens[0], tokens[1])
+			prog := exec.Command(tokens[0], tokens[1:]...)
 
 			err := prog.Start()
 			if err != nil {
 			}
-			job_no := "[1]"
+			job_no++
 			job_pid := strconv.Itoa(prog.Process.Pid)
-			fmt.Println(job_no + " " + job_pid)
-			fmt.Print("$ ")
+			fmt.Println("[" + strconv.Itoa(job_no) + "]" + " " + job_pid)
+
+			continue
 		}
 
 		switch redir {
