@@ -51,10 +51,15 @@ func main() {
 			prog.Stdout = out
 			prog.Stderr = outErr
 			prog.Start()
-			if err != nil {
-			}
 			job_no++
+			bg_job_cmd = append(bg_job_cmd, "Running")
 			bg_job_no_and_cmd[job_no] = strings.Join(bg_job_cmd, " ")
+
+			go func() {
+				_ = prog.Wait()
+				bg_job_no_and_cmd[job_no] = strings.TrimSuffix(bg_job_no_and_cmd[job_no], "Running") + " Done"
+			}()
+
 			job_pid := strconv.Itoa(prog.Process.Pid)
 			fmt.Println("[" + strconv.Itoa(job_no) + "]" + " " + job_pid)
 
@@ -178,7 +183,8 @@ func main() {
 				}
 			case "jobs":
 				{
-					if job_no == 0 {
+
+					if len(bg_job_no_and_cmd) == 0 {
 						fmt.Fprint(out, "$ ")
 					} else {
 
@@ -193,7 +199,11 @@ func main() {
 							default:
 								jm_no = 0
 							}
-							fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Running                 " + bg_job_no_and_cmd[i])
+							if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
+								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
+							} else {
+								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Running"))
+							}
 						}
 					}
 				}
