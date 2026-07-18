@@ -17,7 +17,7 @@ var _ = fmt.Print
 
 var kayitlar = map[string]string{}
 var job_no = 0
-var bg_job_cmd []string
+var bg_job_no_and_cmd = map[int]string{}
 
 func main() {
 
@@ -45,7 +45,7 @@ func main() {
 		var outErr = os.Stderr
 
 		if tokens[len(tokens)-1] == "&" {
-			bg_job_cmd = tokens
+			bg_job_cmd := tokens
 			tokens = tokens[:len(tokens)-1]
 			prog := exec.Command(tokens[0], tokens[1:]...)
 			prog.Stdout = out
@@ -54,6 +54,7 @@ func main() {
 			if err != nil {
 			}
 			job_no++
+			bg_job_no_and_cmd[job_no] = strings.Join(bg_job_cmd, " ")
 			job_pid := strconv.Itoa(prog.Process.Pid)
 			fmt.Println("[" + strconv.Itoa(job_no) + "]" + " " + job_pid)
 
@@ -180,8 +181,19 @@ func main() {
 					if job_no == 0 {
 						fmt.Fprint(out, "$ ")
 					} else {
-						job_name := strings.Join(bg_job_cmd, " ")
-						fmt.Println("[" + strconv.Itoa(job_no) + "]" + "+" + "  " + "Running                 " + job_name)
+
+						job_marker := []string{" ", "-", "+"}
+						jm_no := 0
+						for i := 1; i < job_no; i++ {
+							switch i {
+							case job_no:
+								jm_no = 2
+							case (job_no - 1):
+								jm_no = 1
+							default:
+								fmt.Println("[" + strconv.Itoa(job_no) + "]" + job_marker[jm_no] + "  " + "Running                 " + bg_job_no_and_cmd[i])
+							}
+						}
 					}
 				}
 			default:
