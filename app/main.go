@@ -191,20 +191,22 @@ func main() {
 
 						job_marker := []string{" ", "-", "+"}
 						jm_no := 0
-						for i := 1; i < (job_no + 1); i++ {
-							switch i {
-							case job_no:
+						for i := 1; i < (len(bg_job_no_and_cmd) + 1); i++ {
+							switch len(bg_job_no_and_cmd) - i {
+							case 0:
 								jm_no = 2
-							case (job_no - 1):
+							case 1:
 								jm_no = 1
 							default:
 								jm_no = 0
 							}
 							if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
 								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
-							} else {
+							} else if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
 								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
 								delete(bg_job_no_and_cmd, i)
+							} else {
+
 							}
 						}
 					}
