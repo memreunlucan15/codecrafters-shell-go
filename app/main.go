@@ -46,8 +46,9 @@ func main() {
 		if tokens[len(tokens)-1] == "&" {
 			tokens = tokens[:len(tokens)-1]
 			prog := exec.Command(tokens[0], tokens[1:]...)
-
-			err := prog.Start()
+			prog.Stdout = out
+			prog.Stderr = outErr
+			prog.Start()
 			if err != nil {
 			}
 			job_no++
