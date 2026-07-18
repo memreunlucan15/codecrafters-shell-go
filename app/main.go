@@ -185,7 +185,8 @@ func main() {
 				{
 
 					if len(bg_job_no_and_cmd) == 0 {
-						fmt.Fprint(out, "$ ")
+						continue
+						//fmt.Fprint(out, "$ ")
 					} else {
 
 						job_marker := []string{" ", "-", "+"}
