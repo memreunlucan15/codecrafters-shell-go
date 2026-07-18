@@ -192,7 +192,7 @@ func main() {
 						job_marker := []string{" ", "-", "+"}
 						jm_no := 0
 						for i := 1; i < (job_no + 1); i++ {
-							switch len(bg_job_no_and_cmd) - i {
+							switch job_no - i {
 							case 0:
 								jm_no = 2
 							case 1:
