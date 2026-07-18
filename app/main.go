@@ -17,6 +17,7 @@ var _ = fmt.Print
 
 var kayitlar = map[string]string{}
 var job_no = 0
+var bg_job_cmd []string
 
 func main() {
 
@@ -42,8 +43,6 @@ func main() {
 
 		var out = os.Stdout
 		var outErr = os.Stderr
-
-		var bg_job_cmd []string
 
 		if tokens[len(tokens)-1] == "&" {
 			bg_job_cmd = tokens
