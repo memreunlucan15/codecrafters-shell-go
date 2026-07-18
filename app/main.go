@@ -202,7 +202,7 @@ func main() {
 							if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
 								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
 							} else {
-								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Running"))
+								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
 							}
 						}
 					}
