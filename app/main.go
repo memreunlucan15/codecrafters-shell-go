@@ -54,10 +54,10 @@ func main() {
 			job_no++
 			bg_job_cmd = append(bg_job_cmd, "Running")
 			bg_job_no_and_cmd[job_no] = strings.Join(bg_job_cmd, " ")
-
+			this_process := job_no
 			go func() {
 				_ = prog.Wait()
-				bg_job_no_and_cmd[job_no] = strings.TrimSuffix(bg_job_no_and_cmd[job_no], "Running") + "Done"
+				bg_job_no_and_cmd[this_process] = strings.TrimSuffix(bg_job_no_and_cmd[job_no], "Running") + "Done"
 			}()
 
 			job_pid := strconv.Itoa(prog.Process.Pid)
