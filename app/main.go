@@ -189,21 +189,26 @@ func main() {
 						//fmt.Fprint(out, "$ ")
 					} else {
 
-						job_marker := []string{" ", "-", "+"}
-						jm_no := 0
+						biggest := 0
+						sec_biggest := 0
+						for i := 1; i <= job_no; i++ {
+							v := bg_job_no_and_cmd[i]
+							if strings.HasSuffix(v, "Running") || strings.HasSuffix(v, "Done") {
+								sec_biggest = biggest
+								biggest = i
+							}
+						}
 						for i := 1; i < (job_no + 1); i++ {
-							switch job_no - i {
-							case 0:
-								jm_no = 2
-							case 1:
-								jm_no = 1
-							default:
-								jm_no = 0
+							job_marker := " "
+							if i == biggest {
+								job_marker = "+"
+							} else if i == sec_biggest {
+								job_marker = "-"
 							}
 							if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
-								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
+								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
 							} else if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
-								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
+								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
 								bg_job_no_and_cmd[i] = bg_job_no_and_cmd[i] + "-delete"
 							} else {
 
