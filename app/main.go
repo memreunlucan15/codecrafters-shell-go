@@ -43,7 +43,10 @@ func main() {
 		var out = os.Stdout
 		var outErr = os.Stderr
 
+		var bg_job_cmd []string
+
 		if tokens[len(tokens)-1] == "&" {
+			bg_job_cmd = tokens
 			tokens = tokens[:len(tokens)-1]
 			prog := exec.Command(tokens[0], tokens[1:]...)
 			prog.Stdout = out
@@ -175,10 +178,11 @@ func main() {
 				}
 			case "jobs":
 				{
-					if len(tokens) == 1 {
+					if job_no == 0 {
 						fmt.Fprint(out, "$ ")
 					} else {
-
+						job_name := strings.Join(bg_job_cmd, " ")
+						fmt.Println("[" + strconv.Itoa(job_no) + "]" + "+" + "  " + "Running                 " + job_name)
 					}
 				}
 			default:
