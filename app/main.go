@@ -193,7 +193,7 @@ func main() {
 							default:
 								jm_no = 0
 							}
-							fmt.Println("[" + strconv.Itoa(job_no) + "]" + job_marker[jm_no] + "  " + "Running                 " + bg_job_no_and_cmd[i])
+							fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Running                 " + bg_job_no_and_cmd[i])
 						}
 					}
 				}
