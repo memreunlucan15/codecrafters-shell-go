@@ -204,9 +204,14 @@ func main() {
 								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
 							} else if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
 								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker[jm_no] + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
-								delete(bg_job_no_and_cmd, i)
+								bg_job_no_and_cmd[i] = bg_job_no_and_cmd[i] + "-delete"
 							} else {
 
+							}
+						}
+						for i := 1; i < (len(bg_job_no_and_cmd) + 1); i++ {
+							if strings.HasSuffix(bg_job_no_and_cmd[i], "-delete") {
+								delete(bg_job_no_and_cmd, i)
 							}
 						}
 					}
