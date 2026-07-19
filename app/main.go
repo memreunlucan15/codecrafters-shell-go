@@ -301,7 +301,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 		}
 	case "echo":
 		{
-			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
+			fmt.Fprintln(out, strings.Join(tokens[1:], " "))
 		}
 	case "complete":
 		{
