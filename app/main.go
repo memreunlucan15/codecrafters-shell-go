@@ -43,28 +43,26 @@ func main() {
 		var out = os.Stdout
 		var outErr = os.Stderr
 
-		for s, t := range tokens {
-			if t == "|" {
-				first_piece := tokens[:s]
-				sec_piece := tokens[s+1:]
-				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
-				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
+		if p := isPipe(tokens); p >= 0 {
+			first_piece := tokens[:p]
+			sec_piece := tokens[p+1:]
+			prog1 := exec.Command(first_piece[0], first_piece[1:]...)
+			prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
 
-				prog1.Stderr = outErr
-				prog2.Stdout = out
-				prog2.Stderr = outErr
+			prog1.Stderr = outErr
+			prog2.Stdout = out
+			prog2.Stderr = outErr
 
-				boru, _ := prog1.StdoutPipe()
-				prog2.Stdin = boru // boruyu bağladık
+			boru, _ := prog1.StdoutPipe()
+			prog2.Stdin = boru // boruyu bağladık
 
-				prog1.Start()
-				prog2.Start()
+			prog1.Start()
+			prog2.Start()
 
-				prog2.Wait()
-				prog1.Wait()
+			prog2.Wait()
+			prog1.Wait()
 
-				break
-			}
+			continue
 		}
 
 		if tokens[len(tokens)-1] == "&" {
@@ -326,6 +324,19 @@ func isRedir(tokenized []string) int {
 		case "2>>":
 			durum = 4
 			return durum
+		}
+	}
+	return durum
+}
+
+func isPipe(tokenized []string) int {
+	var durum int
+	for s, t := range tokenized {
+		if t == "|" {
+			durum = s
+			return durum
+		} else {
+			durum = -1
 		}
 	}
 	return durum
