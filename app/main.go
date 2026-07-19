@@ -63,7 +63,7 @@ func main() {
 				prog2.Wait()
 				prog1.Wait()
 
-				continue
+				break
 			}
 		}
 
