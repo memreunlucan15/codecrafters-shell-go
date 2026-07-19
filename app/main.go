@@ -70,7 +70,7 @@ func main() {
 			}()
 
 			job_pid := strconv.Itoa(prog.Process.Pid)
-			fmt.Println("[" + strconv.Itoa(job_no) + "]" + " " + job_pid)
+			fmt.Println("[" + strconv.Itoa(closest_available) + "]" + " " + job_pid)
 			process_check()
 			continue
 		}
