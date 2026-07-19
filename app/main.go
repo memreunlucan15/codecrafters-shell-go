@@ -31,7 +31,7 @@ func main() {
 	defer rl.Close()
 
 	for {
-
+		process_check()
 		command, err := rl.Readline()
 		command = strings.TrimSpace(command)
 		tokens := tokenci(command) // Tokenlere ayırma
@@ -291,6 +291,38 @@ func isRedir(tokenized []string) int {
 		}
 	}
 	return durum
+}
+
+func process_check() {
+	biggest := 0
+	sec_biggest := 0
+	for i := 1; i <= job_no; i++ {
+		v := bg_job_no_and_cmd[i]
+		if strings.HasSuffix(v, "Running") || strings.HasSuffix(v, "Done") {
+			sec_biggest = biggest
+			biggest = i
+		}
+	}
+	for i := 1; i < (job_no + 1); i++ {
+		job_marker := " "
+		if i == biggest {
+			job_marker = "+"
+		} else if i == sec_biggest {
+			job_marker = "-"
+		}
+
+		if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
+			fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
+			bg_job_no_and_cmd[i] = bg_job_no_and_cmd[i] + "-delete"
+		} else {
+
+		}
+	}
+	for i := 1; i < (len(bg_job_no_and_cmd) + 1); i++ {
+		if strings.HasSuffix(bg_job_no_and_cmd[i], "-delete") {
+			delete(bg_job_no_and_cmd, i)
+		}
+	}
 }
 
 type benimCompleter struct {
