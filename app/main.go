@@ -49,7 +49,7 @@ func main() {
 				sec_piece := tokens[s:]
 				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
 				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
-				prog1.Stdout = out
+				//prog1.Stdout = out
 				prog1.Stderr = outErr
 				prog2.Stdout = out
 				prog2.Stderr = outErr
