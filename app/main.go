@@ -46,7 +46,7 @@ func main() {
 		for s, t := range tokens {
 			if t == "|" {
 				first_piece := tokens[:s]
-				sec_piece := tokens[s:]
+				sec_piece := tokens[s+1:]
 				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
 				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
 				//prog1.Stdout = out
@@ -67,7 +67,7 @@ func main() {
 				go func() {
 					_ = prog1.Wait()
 				}()
-
+				continue
 			}
 		}
 
