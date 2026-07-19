@@ -43,6 +43,34 @@ func main() {
 		var out = os.Stdout
 		var outErr = os.Stderr
 
+		for s, t := range tokens {
+			if t == "|" {
+				first_piece := tokens[:s]
+				sec_piece := tokens[s:]
+				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
+				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
+				prog1.Stdout = out
+				prog1.Stderr = outErr
+				prog2.Stdout = out
+				prog2.Stderr = outErr
+
+				boru, _ := prog1.StdoutPipe()
+				prog2.Stdin = boru // boruyu bağladık
+
+				prog1.Start()
+				prog2.Start()
+
+				go func() {
+					_ = prog2.Wait()
+				}()
+
+				go func() {
+					_ = prog1.Wait()
+				}()
+
+			}
+		}
+
 		if tokens[len(tokens)-1] == "&" {
 			bg_job_cmd := tokens
 			tokens = tokens[:len(tokens)-1]
