@@ -31,7 +31,6 @@ func main() {
 	defer rl.Close()
 
 	for {
-		process_check()
 		command, err := rl.Readline()
 		command = strings.TrimSpace(command)
 		tokens := tokenci(command) // Tokenlere ayırma
@@ -52,9 +51,19 @@ func main() {
 			prog.Stderr = outErr
 			prog.Start()
 			job_no++
+
+			closest_available := 0
+			for i := 1; i <= job_no; i++ {
+				v := bg_job_no_and_cmd[i]
+				if v == "" {
+					closest_available = i
+					break
+				}
+			}
+
 			bg_job_cmd = append(bg_job_cmd, "Running")
-			bg_job_no_and_cmd[job_no] = strings.Join(bg_job_cmd, " ")
-			this_process := job_no
+			bg_job_no_and_cmd[closest_available] = strings.Join(bg_job_cmd, " ")
+			this_process := closest_available
 			go func() {
 				_ = prog.Wait()
 				bg_job_no_and_cmd[this_process] = strings.TrimSuffix(bg_job_no_and_cmd[this_process], "Running") + "Done"
@@ -62,7 +71,7 @@ func main() {
 
 			job_pid := strconv.Itoa(prog.Process.Pid)
 			fmt.Println("[" + strconv.Itoa(job_no) + "]" + " " + job_pid)
-
+			process_check()
 			continue
 		}
 
@@ -149,6 +158,7 @@ func main() {
 							if len(tokens) > 3 {
 								kayitlar[tokens[3]] = tokens[2]
 							} else {
+								process_check()
 								continue
 							}
 						case "-p":
@@ -161,6 +171,7 @@ func main() {
 									fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
 								}
 							} else {
+								process_check()
 								continue
 							}
 						case "-r":
@@ -173,6 +184,7 @@ func main() {
 							if len(tokens) > 2 {
 								fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 							} else {
+								process_check()
 								continue
 							}
 						}
@@ -185,6 +197,7 @@ func main() {
 				{
 
 					if len(bg_job_no_and_cmd) == 0 {
+						process_check()
 						continue
 						//fmt.Fprint(out, "$ ")
 					} else {
@@ -228,6 +241,7 @@ func main() {
 
 			}
 		}
+		process_check()
 	}
 }
 
