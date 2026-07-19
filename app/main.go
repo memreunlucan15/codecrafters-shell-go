@@ -2,7 +2,9 @@ package main
 
 import (
 	//"bufio"
+	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -19,6 +21,8 @@ var kayitlar = map[string]string{}
 var job_no = 0
 var bg_job_no_and_cmd = map[int]string{}
 
+var command string
+
 func main() {
 
 	rl, err := readline.NewEx(&readline.Config{
@@ -31,7 +35,7 @@ func main() {
 	defer rl.Close()
 
 	for {
-		command, err := rl.Readline()
+		command, err = rl.Readline()
 		command = strings.TrimSpace(command)
 		tokens := tokenci(command) // Tokenlere ayırma
 		redir := isRedir(tokens)
@@ -46,22 +50,59 @@ func main() {
 		if p := isPipe(tokens); p >= 0 {
 			first_piece := tokens[:p]
 			sec_piece := tokens[p+1:]
-			prog1 := exec.Command(first_piece[0], first_piece[1:]...)
-			prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
 
-			prog1.Stderr = outErr
-			prog2.Stdout = out
-			prog2.Stderr = outErr
+			buffer := &bytes.Buffer{}
+			sp_out := io.Discard
 
-			boru, _ := prog1.StdoutPipe()
-			prog2.Stdin = boru // boruyu bağladık
+			fp, _ := runBuiltin(first_piece, buffer, outErr)
+			sp, _ := runBuiltin(sec_piece, sp_out, outErr)
 
-			prog1.Start()
-			prog2.Start()
+			if !fp && !sp {
+				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
+				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
 
-			prog2.Wait()
-			prog1.Wait()
+				prog1.Stderr = outErr
+				prog2.Stdout = out
+				prog2.Stderr = outErr
 
+				boru, _ := prog1.StdoutPipe()
+				prog2.Stdin = boru // boruyu bağladık
+
+				prog1.Start()
+				prog2.Start()
+
+				prog2.Wait()
+				prog1.Wait()
+			} else if fp && !sp {
+				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
+
+				prog2.Stdout = out
+				prog2.Stderr = outErr
+
+				prog2.Stdin = strings.NewReader(buffer.String())
+
+				prog2.Start()
+
+				prog2.Wait()
+			} else if !fp && sp {
+				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
+
+				prog1.Stdout = io.Discard
+				prog1.Stderr = outErr
+
+				prog1.Start()
+				_, quit := runBuiltin(sec_piece, out, outErr)
+				if quit {
+					break
+				}
+
+				prog1.Wait()
+			} else if fp && sp {
+				_, quit := runBuiltin(sec_piece, out, outErr)
+				if quit {
+					break
+				}
+			}
 			continue
 		}
 
@@ -124,143 +165,12 @@ func main() {
 			prog.Stderr = outErr
 			prog.Run()
 		} else {
-			switch tokens[0] {
-			case "type":
-				{
-
-					switch tokens[1] { // type sonrası builtin komut kontrolü
-					case "exit", "echo", "type", "pwd", "cd", "complete", "jobs":
-						fmt.Fprintln(out, tokens[1]+" is a shell builtin")
-					default:
-
-						path, err1 := exec.LookPath(tokens[1])
-						if err1 == nil {
-							fmt.Fprintln(out, tokens[1]+" is "+path)
-						} else {
-							fmt.Fprintln(outErr, tokens[1]+": not found")
-						}
-					}
-
-				}
-			case "pwd":
-				{ // pwd ile ablosute path alma
-
-					abs_path, _ := os.Getwd()
-					fmt.Fprintln(out, abs_path)
-
-				}
-			case "cd":
-				{ // cd ile directory değişimi
-
-					if tokens[1] != "~" {
-						err = os.Chdir(tokens[1])
-						if err != nil {
-							fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
-						}
-					} else {
-						home_dir, _ := os.UserHomeDir()
-						_ = os.Chdir(home_dir)
-					}
-
-				}
-
-			case "exit":
-				{
-					return
-				}
-			case "echo":
-				{
-					fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
-				}
-			case "complete":
-				{
-					if len(tokens) > 1 {
-						switch tokens[1] {
-						case "-C":
-							if len(tokens) > 3 {
-								kayitlar[tokens[3]] = tokens[2]
-							} else {
-								process_check()
-								continue
-							}
-						case "-p":
-							if len(tokens) > 2 {
-								script, var_mi := kayitlar[tokens[2]]
-
-								if !var_mi {
-									fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
-								} else {
-									fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
-								}
-							} else {
-								process_check()
-								continue
-							}
-						case "-r":
-							if len(tokens) > 2 {
-								delete(kayitlar, tokens[2])
-							} else {
-								continue
-							}
-						default:
-							if len(tokens) > 2 {
-								fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
-							} else {
-								process_check()
-								continue
-							}
-						}
-
-					} else {
-						continue
-					}
-				}
-			case "jobs":
-				{
-
-					if len(bg_job_no_and_cmd) == 0 {
-						process_check()
-						continue
-						//fmt.Fprint(out, "$ ")
-					} else {
-
-						biggest := 0
-						sec_biggest := 0
-						for i := 1; i <= job_no; i++ {
-							v := bg_job_no_and_cmd[i]
-							if strings.HasSuffix(v, "Running") || strings.HasSuffix(v, "Done") {
-								sec_biggest = biggest
-								biggest = i
-							}
-						}
-						for i := 1; i < (job_no + 1); i++ {
-							job_marker := " "
-							if i == biggest {
-								job_marker = "+"
-							} else if i == sec_biggest {
-								job_marker = "-"
-							}
-							if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
-								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
-							} else if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
-								fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
-								bg_job_no_and_cmd[i] = bg_job_no_and_cmd[i] + "-delete"
-							} else {
-
-							}
-						}
-						for i := 1; i < (len(bg_job_no_and_cmd) + 1); i++ {
-							if strings.HasSuffix(bg_job_no_and_cmd[i], "-delete") {
-								delete(bg_job_no_and_cmd, i)
-							}
-						}
-					}
-				}
-			default:
-				{
-					fmt.Fprintln(outErr, command+": command not found")
-				}
-
+			ran, quit := runBuiltin(tokens, out, outErr)
+			if quit {
+				break
+			}
+			if !ran {
+				fmt.Fprintln(outErr, command+": command not found")
 			}
 		}
 		process_check()
@@ -340,6 +250,149 @@ func isPipe(tokenized []string) int {
 		}
 	}
 	return durum
+}
+
+func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
+
+	ran = true
+	switch tokens[0] {
+	case "type":
+		{
+
+			switch tokens[1] { // type sonrası builtin komut kontrolü
+			case "exit", "echo", "type", "pwd", "cd", "complete", "jobs":
+				fmt.Fprintln(out, tokens[1]+" is a shell builtin")
+			default:
+
+				path, err1 := exec.LookPath(tokens[1])
+				if err1 == nil {
+					fmt.Fprintln(out, tokens[1]+" is "+path)
+				} else {
+					fmt.Fprintln(outErr, tokens[1]+": not found")
+				}
+			}
+
+		}
+	case "pwd":
+		{ // pwd ile ablosute path alma
+
+			abs_path, _ := os.Getwd()
+			fmt.Fprintln(out, abs_path)
+
+		}
+	case "cd":
+		{ // cd ile directory değişimi
+
+			if tokens[1] != "~" {
+				err := os.Chdir(tokens[1])
+				if err != nil {
+					fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
+				}
+			} else {
+				home_dir, _ := os.UserHomeDir()
+				_ = os.Chdir(home_dir)
+			}
+
+		}
+
+	case "exit":
+		{
+			quit = true
+		}
+	case "echo":
+		{
+			fmt.Fprintln(out, strings.TrimPrefix(command, "echo "))
+		}
+	case "complete":
+		{
+			if len(tokens) > 1 {
+				switch tokens[1] {
+				case "-C":
+					if len(tokens) > 3 {
+						kayitlar[tokens[3]] = tokens[2]
+					} else {
+						process_check()
+						//continue
+					}
+				case "-p":
+					if len(tokens) > 2 {
+						script, var_mi := kayitlar[tokens[2]]
+
+						if !var_mi {
+							fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+						} else {
+							fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
+						}
+					} else {
+						process_check()
+						//continue
+					}
+				case "-r":
+					if len(tokens) > 2 {
+						delete(kayitlar, tokens[2])
+					} else {
+						//continue
+					}
+				default:
+					if len(tokens) > 2 {
+						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+					} else {
+						process_check()
+						//continue
+					}
+				}
+
+			} else {
+				//continue
+			}
+		}
+	case "jobs":
+		{
+
+			if len(bg_job_no_and_cmd) == 0 {
+				process_check()
+				//continue
+				//fmt.Fprint(out, "$ ")
+			} else {
+
+				biggest := 0
+				sec_biggest := 0
+				for i := 1; i <= job_no; i++ {
+					v := bg_job_no_and_cmd[i]
+					if strings.HasSuffix(v, "Running") || strings.HasSuffix(v, "Done") {
+						sec_biggest = biggest
+						biggest = i
+					}
+				}
+				for i := 1; i < (job_no + 1); i++ {
+					job_marker := " "
+					if i == biggest {
+						job_marker = "+"
+					} else if i == sec_biggest {
+						job_marker = "-"
+					}
+					if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
+						fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
+					} else if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
+						fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
+						bg_job_no_and_cmd[i] = bg_job_no_and_cmd[i] + "-delete"
+					} else {
+
+					}
+				}
+				for i := 1; i < (len(bg_job_no_and_cmd) + 1); i++ {
+					if strings.HasSuffix(bg_job_no_and_cmd[i], "-delete") {
+						delete(bg_job_no_and_cmd, i)
+					}
+				}
+			}
+		}
+	default:
+		{
+			ran = false
+		}
+	}
+	return ran, quit
 }
 
 func process_check() {
