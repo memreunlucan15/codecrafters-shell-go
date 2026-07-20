@@ -271,6 +271,7 @@ func isPipeline(tokenized []string) (commands [][]string, is bool) {
 			pipeMi = true
 			cmands = append(cmands, tokens[:i])
 			tokens = tokens[i+1:]
+			i = -1
 
 		}
 
