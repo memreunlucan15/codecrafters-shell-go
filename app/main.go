@@ -60,7 +60,7 @@ func main() {
 
 			for i := 0; i < len(cmdpieces); i++ {
 				if blttablo[i] {
-					runBuiltin(tokens, buffer, outErr)
+					runBuiltin(cmdpieces[i], buffer, outErr)
 				} else {
 					mevcut_program[i] = exec.Command(cmdpieces[i][0], cmdpieces[i][1:]...)
 					mevcut_program[i].Stderr = outErr
