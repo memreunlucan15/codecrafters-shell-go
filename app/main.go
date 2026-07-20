@@ -75,10 +75,16 @@ func main() {
 			}
 
 			for i := 0; i < len(cmdpieces); i++ {
-				mevcut_program[i].Start()
+				if blttablo[i] {
+
+					mevcut_program[i].Start()
+				}
 			}
 			for i := len(cmdpieces) - 1; i == 0; i-- {
-				mevcut_program[i].Wait()
+				if blttablo[i] {
+
+					mevcut_program[i].Wait()
+				}
 			}
 			continue
 		}
