@@ -56,13 +56,19 @@ func main() {
 
 			//var mevcut_program []*exec.Cmd
 			var oncekiCikti io.Reader
+			buffer := &bytes.Buffer{}
 
 			for i := 0; i < len(cmdpieces); i++ {
-				mevcut_program[i] = exec.Command(cmdpieces[i][0], cmdpieces[i][1:]...)
-				mevcut_program[i].Stderr = outErr
-				mevcut_program[i].Stdin = oncekiCikti
-				boru, _ := mevcut_program[i].StdoutPipe()
-				oncekiCikti = boru
+				if blttablo[i] {
+					runBuiltin(tokens, buffer, outErr)
+				} else {
+					mevcut_program[i] = exec.Command(cmdpieces[i][0], cmdpieces[i][1:]...)
+					mevcut_program[i].Stderr = outErr
+					mevcut_program[i].Stdin = oncekiCikti
+					boru, _ := mevcut_program[i].StdoutPipe()
+					oncekiCikti = boru
+
+				}
 				if len(cmdpieces)-1 == i {
 					mevcut_program[i].Stdout = out
 				}
