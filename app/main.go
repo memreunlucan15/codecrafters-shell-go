@@ -80,7 +80,7 @@ func main() {
 					mevcut_program[i].Start()
 				}
 			}
-			for i := len(cmdpieces) - 1; i == 0; i-- {
+			for i := len(cmdpieces) - 1; i >= 0; i-- {
 				if !blttablo[i] {
 
 					mevcut_program[i].Wait()
