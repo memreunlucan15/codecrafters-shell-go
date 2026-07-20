@@ -21,8 +21,6 @@ var kayitlar = map[string]string{}
 var job_no = 0
 var bg_job_no_and_cmd = map[int]string{}
 
-var command string
-
 func main() {
 
 	rl, err := readline.NewEx(&readline.Config{
@@ -35,7 +33,7 @@ func main() {
 	defer rl.Close()
 
 	for {
-		command, err = rl.Readline()
+		command, err := rl.Readline()
 		command = strings.TrimSpace(command)
 		tokens := tokenci(command) // Tokenlere ayırma
 		redir := isRedir(tokens)
@@ -47,17 +45,47 @@ func main() {
 		var out = os.Stdout
 		var outErr = os.Stderr
 
+		cmdpieces, pipeok := isPipeline(tokens)
+		blttablo := make([]bool, len(cmdpieces))
+		mevcut_program := make([]*exec.Cmd, len(cmdpieces))
+
+		if pipeok {
+			for i := 0; i < len(cmdpieces); i++ {
+				_, blttablo[i] = isBuiltin(cmdpieces[i])
+			}
+
+			//var mevcut_program []*exec.Cmd
+			var oncekiCikti io.Reader
+
+			for i := 0; i < len(cmdpieces); i++ {
+				mevcut_program[i] = exec.Command(cmdpieces[i][0], cmdpieces[i][1:]...)
+				mevcut_program[i].Stderr = outErr
+				mevcut_program[i].Stdin = oncekiCikti
+				boru, _ := mevcut_program[i].StdoutPipe()
+				oncekiCikti = boru
+				if len(cmdpieces)-1 == i {
+					mevcut_program[i].Stdout = out
+				}
+			}
+
+			for i := 0; i < len(cmdpieces); i++ {
+				mevcut_program[i].Start()
+			}
+			for i := len(cmdpieces) - 1; i == 0; i-- {
+				mevcut_program[i].Wait()
+			}
+		}
+
 		if p := isPipe(tokens); p >= 0 {
 			first_piece := tokens[:p]
 			sec_piece := tokens[p+1:]
 
 			buffer := &bytes.Buffer{}
-			sp_out := io.Discard
 
-			fp, _ := runBuiltin(first_piece, buffer, outErr)
-			sp, _ := runBuiltin(sec_piece, sp_out, outErr)
+			_, fp := isBuiltin(first_piece)
+			_, sp := isBuiltin(sec_piece)
 
-			if !fp && !sp {
+			if !fp && !sp { // DIŞ - DIŞ
 				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
 				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
 
@@ -73,7 +101,8 @@ func main() {
 
 				prog2.Wait()
 				prog1.Wait()
-			} else if fp && !sp {
+			} else if fp && !sp { // BUILT - DIŞ
+				runBuiltin(first_piece, buffer, outErr)
 				prog2 := exec.Command(sec_piece[0], sec_piece[1:]...)
 
 				prog2.Stdout = out
@@ -84,24 +113,20 @@ func main() {
 				prog2.Start()
 
 				prog2.Wait()
-			} else if !fp && sp {
+			} else if !fp && sp { // DIŞ - BUILT
 				prog1 := exec.Command(first_piece[0], first_piece[1:]...)
 
 				prog1.Stdout = io.Discard
 				prog1.Stderr = outErr
 
 				prog1.Start()
-				_, quit := runBuiltin(sec_piece, out, outErr)
-				if quit {
-					break
-				}
+				runBuiltin(sec_piece, out, outErr)
 
 				prog1.Wait()
-			} else if fp && sp {
-				_, quit := runBuiltin(sec_piece, out, outErr)
-				if quit {
-					break
-				}
+			} else if fp && sp { // BUILT - BUILT
+				runBuiltin(first_piece, buffer, outErr)
+				runBuiltin(sec_piece, out, outErr)
+
 			}
 			continue
 		}
@@ -216,6 +241,67 @@ func tokenci(line string) []string {
 	return sonuc
 }
 
+func isPipeline(tokenized []string) (commands [][]string, is bool) {
+	// var cmdcount = 0
+	var cmands [][]string
+	var tokens []string
+	var pipeMi bool
+	tokens = tokenized
+
+	for i := 0; i < len(tokens); i++ {
+		if tokens[i] == "|" {
+			pipeMi = true
+			cmands = append(cmands, tokens[:i])
+			tokens = tokens[i+1:]
+
+		}
+
+	}
+	if pipeMi {
+		cmands = append(cmands, tokens[0:])
+	}
+
+	return cmands, pipeMi
+}
+
+// "|" var mı, varsa oradan bölüp tokenler yapma fonksiyonu
+
+// çıktı uzunluğuna göre pipe sayısı belirlenir
+// fonksiyon çıktısını alıp tokenlerin blt durumuna bakılır
+// blt durumuna göre pipelar bağlanır
+// komutlar argümanlarıyla birlikte blt durumuna uygun şekilde çalıştırılır
+
+func isBuiltin(tokenized []string) (blt string, durum bool) {
+
+	durum = true
+	switch tokenized[0] {
+
+	case "type":
+		blt = "type"
+	case "pwd":
+		blt = "pwd"
+	case "cd":
+		blt = "cd"
+	case "exit":
+		blt = "exit"
+	case "echo":
+		blt = "echo"
+	case "complete":
+		blt = "complete"
+	case "jobs":
+		blt = "jobs"
+	default:
+		blt = ""
+		durum = false
+	}
+
+	return blt, durum
+}
+
+// builtin durumu kontrol fonkisyonu eklenecek
+// o zaman pipeline kısmında fp vs sp if kontrollerinin öncesinde runBuiltin çalıştırmaya gerek kalmaz
+// bu mantık kurulduktan sonra pipeline kurma ve builtin-dış komut mekanizmaları n tane pipe durumuna göre uyarlanacak.
+
 func isRedir(tokenized []string) int {
 	var durum int
 	for i := 0; i < len(tokenized); i++ {
@@ -255,142 +341,146 @@ func isPipe(tokenized []string) int {
 func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 
 	ran = true
-	switch tokens[0] {
-	case "type":
-		{
+	typeblt, isblt := isBuiltin(tokens)
+	if isblt {
+		switch typeblt {
+		case "type":
+			{
 
-			switch tokens[1] { // type sonrası builtin komut kontrolü
-			case "exit", "echo", "type", "pwd", "cd", "complete", "jobs":
-				fmt.Fprintln(out, tokens[1]+" is a shell builtin")
-			default:
+				switch tokens[1] { // type sonrası builtin komut kontrolü
+				case "exit", "echo", "type", "pwd", "cd", "complete", "jobs":
+					fmt.Fprintln(out, tokens[1]+" is a shell builtin")
+				default:
 
-				path, err1 := exec.LookPath(tokens[1])
-				if err1 == nil {
-					fmt.Fprintln(out, tokens[1]+" is "+path)
-				} else {
-					fmt.Fprintln(outErr, tokens[1]+": not found")
-				}
-			}
-
-		}
-	case "pwd":
-		{ // pwd ile ablosute path alma
-
-			abs_path, _ := os.Getwd()
-			fmt.Fprintln(out, abs_path)
-
-		}
-	case "cd":
-		{ // cd ile directory değişimi
-
-			if tokens[1] != "~" {
-				err := os.Chdir(tokens[1])
-				if err != nil {
-					fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
-				}
-			} else {
-				home_dir, _ := os.UserHomeDir()
-				_ = os.Chdir(home_dir)
-			}
-
-		}
-
-	case "exit":
-		{
-			quit = true
-		}
-	case "echo":
-		{
-			fmt.Fprintln(out, strings.Join(tokens[1:], " "))
-		}
-	case "complete":
-		{
-			if len(tokens) > 1 {
-				switch tokens[1] {
-				case "-C":
-					if len(tokens) > 3 {
-						kayitlar[tokens[3]] = tokens[2]
+					path, err1 := exec.LookPath(tokens[1])
+					if err1 == nil {
+						fmt.Fprintln(out, tokens[1]+" is "+path)
 					} else {
-						process_check()
-						//continue
+						fmt.Fprintln(outErr, tokens[1]+": not found")
 					}
-				case "-p":
-					if len(tokens) > 2 {
-						script, var_mi := kayitlar[tokens[2]]
+				}
 
-						if !var_mi {
+			}
+		case "pwd":
+			{ // pwd ile ablosute path alma
+
+				abs_path, _ := os.Getwd()
+				fmt.Fprintln(out, abs_path)
+
+			}
+		case "cd":
+			{ // cd ile directory değişimi
+
+				if tokens[1] != "~" {
+					err := os.Chdir(tokens[1])
+					if err != nil {
+						fmt.Fprintln(out, "cd: "+tokens[1]+": No such file or directory")
+					}
+				} else {
+					home_dir, _ := os.UserHomeDir()
+					_ = os.Chdir(home_dir)
+				}
+
+			}
+
+		case "exit":
+			{
+				quit = true
+			}
+		case "echo":
+			{
+				fmt.Fprintln(out, strings.Join(tokens[1:], " "))
+			}
+		case "complete":
+			{
+				if len(tokens) > 1 {
+					switch tokens[1] {
+					case "-C":
+						if len(tokens) > 3 {
+							kayitlar[tokens[3]] = tokens[2]
+						} else {
+							process_check()
+							//continue
+						}
+					case "-p":
+						if len(tokens) > 2 {
+							script, var_mi := kayitlar[tokens[2]]
+
+							if !var_mi {
+								fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
+							} else {
+								fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
+							}
+						} else {
+							process_check()
+							//continue
+						}
+					case "-r":
+						if len(tokens) > 2 {
+							delete(kayitlar, tokens[2])
+						} else {
+							//continue
+						}
+					default:
+						if len(tokens) > 2 {
 							fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
 						} else {
-							fmt.Fprintln(out, tokens[0]+" "+"-C"+" "+"'"+script+"' "+tokens[2])
+							process_check()
+							//continue
 						}
-					} else {
-						process_check()
-						//continue
 					}
-				case "-r":
-					if len(tokens) > 2 {
-						delete(kayitlar, tokens[2])
-					} else {
-						//continue
-					}
-				default:
-					if len(tokens) > 2 {
-						fmt.Fprintln(outErr, tokens[0]+": "+tokens[2]+": "+"no completion specification")
-					} else {
-						process_check()
-						//continue
-					}
-				}
 
-			} else {
-				//continue
+				} else {
+					//continue
+				}
 			}
-		}
-	case "jobs":
-		{
+		case "jobs":
+			{
 
-			if len(bg_job_no_and_cmd) == 0 {
-				process_check()
-				//continue
-				//fmt.Fprint(out, "$ ")
-			} else {
+				if len(bg_job_no_and_cmd) == 0 {
+					process_check()
+					//continue
+					//fmt.Fprint(out, "$ ")
+				} else {
+					biggest := 0
+					sec_biggest := 0
+					for i := 1; i <= job_no; i++ {
+						v := bg_job_no_and_cmd[i]
+						if strings.HasSuffix(v, "Running") || strings.HasSuffix(v, "Done") {
+							sec_biggest = biggest
+							biggest = i
+						}
+					}
+					for i := 1; i < (job_no + 1); i++ {
+						job_marker := " "
+						if i == biggest {
+							job_marker = "+"
+						} else if i == sec_biggest {
+							job_marker = "-"
+						}
+						if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
+							fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
+						} else if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
+							fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
+							bg_job_no_and_cmd[i] = bg_job_no_and_cmd[i] + "-delete"
+						} else {
 
-				biggest := 0
-				sec_biggest := 0
-				for i := 1; i <= job_no; i++ {
-					v := bg_job_no_and_cmd[i]
-					if strings.HasSuffix(v, "Running") || strings.HasSuffix(v, "Done") {
-						sec_biggest = biggest
-						biggest = i
+						}
 					}
-				}
-				for i := 1; i < (job_no + 1); i++ {
-					job_marker := " "
-					if i == biggest {
-						job_marker = "+"
-					} else if i == sec_biggest {
-						job_marker = "-"
-					}
-					if strings.HasSuffix(bg_job_no_and_cmd[i], "Running") {
-						fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Running                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " Running"))
-					} else if strings.HasSuffix(bg_job_no_and_cmd[i], "Done") {
-						fmt.Println("[" + strconv.Itoa(i) + "]" + job_marker + "  " + "Done                 " + strings.TrimSuffix(bg_job_no_and_cmd[i], " & Done"))
-						bg_job_no_and_cmd[i] = bg_job_no_and_cmd[i] + "-delete"
-					} else {
-
-					}
-				}
-				for i := 1; i < (len(bg_job_no_and_cmd) + 1); i++ {
-					if strings.HasSuffix(bg_job_no_and_cmd[i], "-delete") {
-						delete(bg_job_no_and_cmd, i)
+					for i := 1; i < (len(bg_job_no_and_cmd) + 1); i++ {
+						if strings.HasSuffix(bg_job_no_and_cmd[i], "-delete") {
+							delete(bg_job_no_and_cmd, i)
+						}
 					}
 				}
 			}
+		default:
+			{
+				ran = false
+			}
 		}
-	default:
-		{
-			ran = false
-		}
+	} else {
+		ran = false
 	}
 	return ran, quit
 }
