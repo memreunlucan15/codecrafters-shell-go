@@ -74,6 +74,7 @@ func main() {
 			for i := len(cmdpieces) - 1; i == 0; i-- {
 				mevcut_program[i].Wait()
 			}
+			continue
 		}
 
 		if p := isPipe(tokens); p >= 0 {
