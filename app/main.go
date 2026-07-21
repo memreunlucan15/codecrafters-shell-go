@@ -502,7 +502,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 		case "history":
 			last_n := 0
 
-			if len(tokens) > 2 && tokens[2] == "-r" {
+			if len(tokens) > 2 && tokens[1] == "-r" {
 				file, _ := os.ReadFile(tokens[2])
 				fTos := strings.Fields(string(file))
 				for i := 0; i < len(fTos); i++ {
