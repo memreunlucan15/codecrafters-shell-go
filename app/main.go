@@ -501,7 +501,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 		case "history":
 			history_mem = append(history_mem, "history")
 			for i := 0; i < len(history_mem); i++ {
-				fmt.Println(strconv.Itoa(i+1) + " " + history_mem[i])
+				fmt.Println("    " + strconv.Itoa(i+1) + "  " + history_mem[i])
 			}
 		default:
 			{
