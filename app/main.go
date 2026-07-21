@@ -505,7 +505,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			if len(tokens) > 2 && tokens[1] == "-r" {
 				file, _ := os.ReadFile(tokens[2])
 				fTos := strings.Split(string(file), "\n")
-				for i := 0; i < len(fTos); i++ {
+				for i := 0; i < len(fTos)-1; i++ {
 					history_mem = append(history_mem, fTos[i])
 				}
 			}
