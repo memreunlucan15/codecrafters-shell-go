@@ -514,9 +514,11 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 				n, _ := strconv.Atoi(tokens[1])
 				last_n = len(history_mem) - n
 			}
+			if len(tokens) < 3 {
 
-			for i := last_n; i < len(history_mem); i++ {
-				fmt.Println("    " + strconv.Itoa(i+1) + "  " + history_mem[i])
+				for i := last_n; i < len(history_mem); i++ {
+					fmt.Println("    " + strconv.Itoa(i+1) + "  " + history_mem[i])
+				}
 			}
 		default:
 			{
