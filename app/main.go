@@ -222,6 +222,7 @@ func main() {
 		} else {
 			ran, quit := runBuiltin(tokens, out, outErr)
 			if quit {
+				savehist(histloc)
 				break
 			}
 			if !ran {
