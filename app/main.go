@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -22,6 +23,7 @@ var job_no = 0
 var bg_job_no_and_cmd = map[int]string{}
 
 var history_mem []string
+var appnd_mem []string
 
 func main() {
 
@@ -503,22 +505,41 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			last_n := 0
 
 			if len(tokens) > 2 {
-				if tokens[1] == "-r" {
-					file, _ := os.ReadFile(tokens[2])
-					fTos := strings.Split(string(file), "\n")
-					for i := 0; i < len(fTos)-1; i++ {
-						history_mem = append(history_mem, fTos[i])
+				switch tokens[1] {
+				case "-r":
+					{
+						file, _ := os.ReadFile(tokens[2])
+						fTos := strings.Split(string(file), "\n")
+						for i := 0; i < len(fTos)-1; i++ {
+							history_mem = append(history_mem, fTos[i])
+						}
 					}
-				} else if tokens[1] == "-w" {
-					var datab []byte
-					//history_mem = append(history_mem, "\n")
-					for i := 0; i < len(history_mem); i++ {
-						hb := history_mem[i]
-						datab = fmt.Append(datab, hb+"\n")
-					}
+				case "-w":
+					{
+						var datab []byte
+						//history_mem = append(history_mem, "\n")
+						for i := 0; i < len(history_mem); i++ {
+							hb := history_mem[i]
+							datab = fmt.Append(datab, hb+"\n")
+						}
 
-					os.WriteFile(tokens[2], datab, 0644)
-					history_mem = history_mem[:len(history_mem)-1]
+						os.WriteFile(tokens[2], datab, 0644)
+						history_mem = history_mem[:len(history_mem)-1]
+					}
+				case "-a":
+					{
+						var datab []byte
+						if !slices.Equal(appnd_mem, history_mem) {
+							for i := 0; i < len(history_mem); i++ {
+								hb := history_mem[i]
+								datab = fmt.Append(datab, hb+"\n")
+								appnd_mem = append(appnd_mem, history_mem[i])
+							}
+							dosya, _ := os.OpenFile(tokens[len(tokens)-1], os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+							dosya.Write(datab)
+							history_mem = history_mem[:len(history_mem)-1]
+						}
+					}
 				}
 			}
 
