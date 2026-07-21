@@ -514,8 +514,9 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 					history_mem = append(history_mem, "\n")
 					for i := 0; i < len(history_mem); i++ {
 						hb := history_mem[i]
-						datab = []byte(hb)
+						datab = fmt.Append(datab, hb)
 					}
+
 					os.WriteFile(tokens[2], datab, 0644)
 					history_mem = history_mem[:len(history_mem)-1]
 				}
