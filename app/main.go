@@ -511,10 +511,10 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 					}
 				} else if tokens[1] == "-w" {
 					var datab []byte
-					history_mem = append(history_mem, "\n")
+					//history_mem = append(history_mem, "\n")
 					for i := 0; i < len(history_mem); i++ {
 						hb := history_mem[i]
-						datab = fmt.Append(datab, hb)
+						datab = fmt.Append(datab, hb+"\n")
 					}
 
 					os.WriteFile(tokens[2], datab, 0644)
