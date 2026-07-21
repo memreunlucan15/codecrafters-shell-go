@@ -608,7 +608,7 @@ func savehist(histloc string, hfile []string) {
 	var datab []byte
 
 	for i := 0; i < len(history_mem); i++ {
-		if i > len(hfile) {
+		if i > len(hfile)-2 {
 			hb := history_mem[i]
 			datab = fmt.Append(datab, hb+"\n")
 		}
