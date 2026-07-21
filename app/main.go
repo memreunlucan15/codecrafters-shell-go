@@ -21,6 +21,8 @@ var kayitlar = map[string]string{}
 var job_no = 0
 var bg_job_no_and_cmd = map[int]string{}
 
+var history_mem []string
+
 func main() {
 
 	rl, err := readline.NewEx(&readline.Config{
@@ -44,6 +46,8 @@ func main() {
 
 		var out = os.Stdout
 		var outErr = os.Stderr
+
+		history_mem = append(history_mem, command)
 
 		cmdpieces, pipeok := isPipeline(tokens)
 		blttablo := make([]bool, len(cmdpieces))
@@ -309,6 +313,7 @@ func isBuiltin(tokenized []string) (blt string, durum bool) {
 		blt = "complete"
 	case "jobs":
 		blt = "jobs"
+	case "history":
 	default:
 		blt = ""
 		durum = false
@@ -367,7 +372,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			{
 
 				switch tokens[1] { // type sonrası builtin komut kontrolü
-				case "exit", "echo", "type", "pwd", "cd", "complete", "jobs":
+				case "exit", "echo", "type", "pwd", "cd", "complete", "jobs", "history":
 					fmt.Fprintln(out, tokens[1]+" is a shell builtin")
 				default:
 
@@ -492,6 +497,11 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 						}
 					}
 				}
+			}
+		case "history":
+			history_mem = append(history_mem, "history")
+			for i := 0; i < len(history_mem); i++ {
+				fmt.Println(strconv.Itoa(i+1) + " " + history_mem[i])
 			}
 		default:
 			{
