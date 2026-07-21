@@ -500,7 +500,12 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 				}
 			}
 		case "history":
-			for i := 0; i < len(history_mem); i++ {
+			last_n := 0
+			if len(tokens) > 1 {
+				n, _ := strconv.Atoi(tokens[1])
+				last_n = len(history_mem) - n
+			}
+			for i := last_n; i < len(history_mem); i++ {
 				fmt.Println("    " + strconv.Itoa(i+1) + "  " + history_mem[i])
 			}
 		default:
