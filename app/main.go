@@ -502,11 +502,22 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 		case "history":
 			last_n := 0
 
-			if len(tokens) > 2 && tokens[1] == "-r" {
-				file, _ := os.ReadFile(tokens[2])
-				fTos := strings.Split(string(file), "\n")
-				for i := 0; i < len(fTos)-1; i++ {
-					history_mem = append(history_mem, fTos[i])
+			if len(tokens) > 2 {
+				if tokens[1] == "-r" {
+					file, _ := os.ReadFile(tokens[2])
+					fTos := strings.Split(string(file), "\n")
+					for i := 0; i < len(fTos)-1; i++ {
+						history_mem = append(history_mem, fTos[i])
+					}
+				} else if tokens[1] == "-w" {
+					var datab []byte
+					history_mem = append(history_mem, "\n")
+					for i := 0; i < len(history_mem); i++ {
+						hb := history_mem[i]
+						datab = []byte(hb)
+					}
+					os.WriteFile(tokens[2], datab, 0644)
+					history_mem = history_mem[:len(history_mem)-1]
 				}
 			}
 
