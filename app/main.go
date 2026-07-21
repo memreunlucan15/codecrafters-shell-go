@@ -314,6 +314,7 @@ func isBuiltin(tokenized []string) (blt string, durum bool) {
 	case "jobs":
 		blt = "jobs"
 	case "history":
+		blt = "history"
 	default:
 		blt = ""
 		durum = false
