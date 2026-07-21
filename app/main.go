@@ -501,10 +501,20 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			}
 		case "history":
 			last_n := 0
-			if len(tokens) > 1 {
+
+			if len(tokens) > 2 && tokens[2] == "-r" {
+				file, _ := os.ReadFile(tokens[2])
+				fTos := strings.Fields(string(file))
+				for i := 0; i < len(fTos); i++ {
+					history_mem = append(history_mem, fTos[i])
+				}
+			}
+
+			if len(tokens) > 1 && len(tokens) < 3 {
 				n, _ := strconv.Atoi(tokens[1])
 				last_n = len(history_mem) - n
 			}
+
 			for i := last_n; i < len(history_mem); i++ {
 				fmt.Println("    " + strconv.Itoa(i+1) + "  " + history_mem[i])
 			}
