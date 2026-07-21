@@ -35,6 +35,12 @@ func main() {
 		panic(err)
 	}
 	defer rl.Close()
+	histloc := os.Getenv("HISTFILE")
+	histfile, _ := os.ReadFile(histloc)
+	fTos := strings.Split(string(histfile), "\n")
+	for i := 0; i < len(fTos)-1; i++ {
+		history_mem = append(history_mem, fTos[i])
+	}
 
 	for {
 		command, err := rl.Readline()
@@ -595,6 +601,16 @@ func process_check() {
 			delete(bg_job_no_and_cmd, i)
 		}
 	}
+}
+
+func savehist(histloc string) {
+	var datab []byte
+	for i := 0; i < len(history_mem); i++ {
+		hb := history_mem[i]
+		datab = fmt.Append(datab, hb+"\n")
+	}
+	dosya, _ := os.OpenFile(histloc, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+	dosya.Write(datab)
 }
 
 type benimCompleter struct {
