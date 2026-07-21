@@ -606,12 +606,17 @@ func process_check() {
 
 func savehist(histloc string) {
 	var datab []byte
-	for i := 0; i < len(history_mem); i++ {
-		hb := history_mem[i]
-		datab = fmt.Append(datab, hb+"\n")
+	if !slices.Equal(appnd_mem, history_mem[:len(history_mem)-1]) {
+
+		for i := 0; i < len(history_mem); i++ {
+			if i > len(appnd_mem)-1 {
+				hb := history_mem[i]
+				datab = fmt.Append(datab, hb+"\n")
+			}
+		}
+		dosya, _ := os.OpenFile(histloc, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
+		dosya.Write(datab)
 	}
-	dosya, _ := os.OpenFile(histloc, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
-	dosya.Write(datab)
 }
 
 type benimCompleter struct {
