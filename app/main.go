@@ -37,9 +37,9 @@ func main() {
 	defer rl.Close()
 	histloc := os.Getenv("HISTFILE")
 	histfile, _ := os.ReadFile(histloc)
-	fTos := strings.Split(string(histfile), "\n")
-	for i := 0; i < len(fTos)-1; i++ {
-		history_mem = append(history_mem, fTos[i])
+	hfile := strings.Split(string(histfile), "\n")
+	for i := 0; i < len(hfile)-1; i++ {
+		history_mem = append(history_mem, hfile[i])
 	}
 
 	for {
@@ -222,7 +222,7 @@ func main() {
 		} else {
 			ran, quit := runBuiltin(tokens, out, outErr)
 			if quit {
-				savehist(histloc)
+				savehist(histloc, hfile)
 				break
 			}
 			if !ran {
@@ -604,14 +604,15 @@ func process_check() {
 	}
 }
 
-func savehist(histloc string) {
+func savehist(histloc string, hfile []string) {
 	var datab []byte
 	if !slices.Equal(appnd_mem, history_mem[:len(history_mem)-1]) {
 
 		for i := 0; i < len(history_mem); i++ {
-			if i > len(appnd_mem)-1 {
+			if i > len(appnd_mem)-1 && i > len(hfile) {
 				hb := history_mem[i]
 				datab = fmt.Append(datab, hb+"\n")
+				appnd_mem = append(appnd_mem, history_mem[i])
 			}
 		}
 		dosya, _ := os.OpenFile(histloc, os.O_APPEND|os.O_RDWR|os.O_CREATE, 0644)
