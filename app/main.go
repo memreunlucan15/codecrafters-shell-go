@@ -382,7 +382,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			{
 
 				switch tokens[1] { // type sonrası builtin komut kontrolü
-				case "exit", "echo", "type", "pwd", "cd", "complete", "jobs", "history":
+				case "exit", "echo", "type", "pwd", "cd", "complete", "jobs", "history", "declare":
 					fmt.Fprintln(out, tokens[1]+" is a shell builtin")
 				default:
 
@@ -416,7 +416,6 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 				}
 
 			}
-
 		case "exit":
 			{
 				quit = true
@@ -554,6 +553,9 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			if len(tokens) > 1 && len(tokens) < 3 {
 				n, _ := strconv.Atoi(tokens[1])
 				last_n = len(history_mem) - n
+				if last_n < 0 {
+					last_n = 0
+				}
 			}
 			if len(tokens) < 3 {
 
@@ -561,6 +563,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 					fmt.Println("    " + strconv.Itoa(i+1) + "  " + history_mem[i])
 				}
 			}
+		case "declare":
 		default:
 			{
 				ran = false
