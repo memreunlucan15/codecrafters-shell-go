@@ -571,7 +571,7 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 				if shellVariables[tokens[2]] == "" {
 					fmt.Println("declare:" + " " + tokens[2] + ":" + " not found")
 				} else {
-					fmt.Println("declare:" + " " + "--" + " " + tokens[2] + "=" + "\"" + shellVariables[tokens[2]] + "\"")
+					fmt.Println("declare" + " " + "--" + " " + tokens[2] + "=" + "\"" + shellVariables[tokens[2]] + "\"")
 				}
 			} else {
 				nameval := tokens[1]
