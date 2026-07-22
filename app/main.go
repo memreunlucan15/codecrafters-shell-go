@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"slices"
 	"sort"
 	"strconv"
@@ -375,6 +376,15 @@ func isPipe(tokenized []string) int {
 	return durum
 }
 
+func isValKey(key string) bool {
+	var deger = regexp.MustCompile(`^[a-zA-Z_][a-zA-Z0-9_]*$`)
+	valMi := deger.MatchString(key)
+	if valMi {
+		return true
+	}
+	return false
+}
+
 func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 
 	ran = true
@@ -576,7 +586,9 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			} else {
 				nameval := tokens[1]
 				i_namval := strings.LastIndex(nameval, "=")
-				shellVariables[nameval[:i_namval]] = nameval[(i_namval + 1):]
+				if isValKey(nameval[:i_namval]) {
+					shellVariables[nameval[:i_namval]] = nameval[(i_namval + 1):]
+				}
 			}
 		default:
 			{
