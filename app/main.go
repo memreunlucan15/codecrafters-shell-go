@@ -324,6 +324,8 @@ func isBuiltin(tokenized []string) (blt string, durum bool) {
 		blt = "jobs"
 	case "history":
 		blt = "history"
+	case "declare":
+		blt = "declare"
 	default:
 		blt = ""
 		durum = false
