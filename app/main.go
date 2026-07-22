@@ -65,13 +65,29 @@ func main() {
 
 		cmdValExp := strings.Contains(command, "$")
 		if cmdValExp {
+
 			for i := 0; i < len(tokens); i++ {
-				v := strings.HasPrefix(tokens[i], "$")
+				otoken := tokens[i]
+				butoken := tokens[i]
+				v := strings.Contains(tokens[i], "$")
 				if v {
-					v_token := strings.TrimPrefix(tokens[i], "$")
+					var sira int
+					for i := 0; i < len(tokens[i]); i++ {
+						if strings.HasPrefix(otoken, "$") {
+							sira = i
+						} else {
+							otoken = otoken[i:]
+						}
+					}
+					v_token := butoken[sira+1:]
+
 					val := isAVar(v_token)
 					if val != "" {
-						tokens[i] = val
+						if sira > 0 {
+							tokens[i] = butoken[:sira] + val
+						} else {
+							tokens[i] = val
+						}
 					}
 				}
 			}
