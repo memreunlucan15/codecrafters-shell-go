@@ -72,7 +72,7 @@ func main() {
 				v := strings.Contains(tokens[i], "$")
 				if v {
 					var sira int
-					for i := 0; i < len(tokens[i]); i++ {
+					for i := 0; i < len(otoken); i++ {
 						if strings.HasPrefix(otoken, "$") {
 							sira = i
 						} else {
