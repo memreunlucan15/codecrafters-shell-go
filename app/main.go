@@ -588,6 +588,8 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 				i_namval := strings.LastIndex(nameval, "=")
 				if isValKey(nameval[:i_namval]) {
 					shellVariables[nameval[:i_namval]] = nameval[(i_namval + 1):]
+				} else {
+					fmt.Println("declare:" + " " + "`" + tokens[1] + "':" + " not a valid identifier")
 				}
 			}
 		default:
