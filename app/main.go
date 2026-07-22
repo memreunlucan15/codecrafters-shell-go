@@ -71,10 +71,11 @@ func main() {
 				butoken := tokens[i]
 				v := strings.Contains(tokens[i], "$")
 				if v {
-					var sira int
+					sira := 0
 					for i := 0; i < len(butoken); i++ {
 						if strings.HasPrefix(otoken, "$") {
 							sira = i
+							break
 						} else {
 							otoken = otoken[i+1:]
 						}
