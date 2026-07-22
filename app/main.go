@@ -67,19 +67,10 @@ func main() {
 		if cmdValExp {
 
 			for i := 0; i < len(tokens); i++ {
-				otoken := tokens[i]
 				butoken := tokens[i]
 				v := strings.Contains(tokens[i], "$")
 				if v {
-					sira := 0
-					for i := 0; i < len(butoken); i++ {
-						if strings.HasPrefix(otoken, "$") {
-							sira = i
-							break
-						} else {
-							otoken = otoken[i+1:]
-						}
-					}
+					sira := strings.Index(butoken, "$")
 					v_token := butoken[sira+1:]
 
 					val := isAVar(v_token)
