@@ -63,6 +63,20 @@ func main() {
 		blttablo := make([]bool, len(cmdpieces))
 		mevcut_program := make([]*exec.Cmd, len(cmdpieces))
 
+		cmdValExp := strings.Contains(command, "$")
+		if cmdValExp {
+			for i := 0; i < len(tokens); i++ {
+				v := strings.HasPrefix(tokens[i], "$")
+				if v {
+					v_token := strings.TrimPrefix(tokens[i], "$")
+					val := isAVar(v_token)
+					if val != "" {
+						tokens[i] = val
+					}
+				}
+			}
+		}
+
 		if pipeok {
 			for i := 0; i < len(cmdpieces); i++ {
 				_, blttablo[i] = isBuiltin(cmdpieces[i])
@@ -383,6 +397,17 @@ func isValKey(key string) bool {
 		return true
 	}
 	return false
+}
+
+func isAVar(vrb string) (varVal string) {
+
+	if shellVariables[vrb] == "" {
+		fmt.Println("declare:" + " " + vrb + ":" + " not found")
+	} else {
+		varVal = shellVariables[vrb]
+	}
+
+	return varVal
 }
 
 func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
