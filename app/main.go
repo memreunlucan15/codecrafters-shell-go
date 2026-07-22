@@ -564,6 +564,9 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 				}
 			}
 		case "declare":
+			if tokens[1] == "-p" {
+				fmt.Println("declare:" + " " + tokens[2] + ":" + " not found")
+			}
 		default:
 			{
 				ran = false
