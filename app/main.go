@@ -21,6 +21,7 @@ var _ = fmt.Print
 var kayitlar = map[string]string{}
 var job_no = 0
 var bg_job_no_and_cmd = map[int]string{}
+var shellVariables = map[string]string{}
 
 var history_mem []string
 var appnd_mem []string
@@ -567,7 +568,15 @@ func runBuiltin(tokens []string, out, outErr io.Writer) (ran bool, quit bool) {
 			}
 		case "declare":
 			if tokens[1] == "-p" {
-				fmt.Println("declare:" + " " + tokens[2] + ":" + " not found")
+				if shellVariables[tokens[2]] == "" {
+					fmt.Println("declare:" + " " + tokens[2] + ":" + " not found")
+				} else {
+					fmt.Println("declare:" + " " + "--" + " " + tokens[2] + "=" + "\"" + shellVariables[tokens[2]] + "\"")
+				}
+			} else {
+				nameval := tokens[1]
+				i_namval := strings.LastIndex(nameval, "=")
+				shellVariables[nameval[:i_namval]] = nameval[(i_namval + 1):]
 			}
 		default:
 			{
