@@ -421,7 +421,7 @@ func isValKey(key string) bool {
 func isAVar(vrb string) (varVal string) {
 
 	if shellVariables[vrb] == "" {
-		fmt.Println("declare:" + " " + vrb + ":" + " not found")
+		//fmt.Println("declare:" + " " + vrb + ":" + " not found")
 	} else {
 		varVal = shellVariables[vrb]
 	}
