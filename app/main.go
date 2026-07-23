@@ -78,7 +78,7 @@ func main() {
 
 							tokens[i] = butoken[:siraBas] + val + butoken[siraSon+1:]
 						} else {
-							tokens[i] = butoken[:siraBas] + val + butoken[siraSon+1:]
+							tokens[i] = butoken[:siraBas] + butoken[siraSon+1:]
 						}
 					} else {
 						v_token := butoken[siraBas+1:]
@@ -92,7 +92,7 @@ func main() {
 							}
 						} else {
 							if siraBas > 0 {
-								tokens[i] = butoken[:siraBas] + val
+								tokens[i] = butoken[:siraBas]
 							} else {
 								tokens[i] = val
 							}
