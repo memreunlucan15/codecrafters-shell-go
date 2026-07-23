@@ -100,6 +100,13 @@ func main() {
 					}
 				}
 			}
+			var temiz []string
+			for _, tkn := range tokens {
+				if tkn != "" {
+					temiz = append(temiz, tkn)
+				}
+			}
+			tokens = temiz
 		}
 
 		if pipeok {
