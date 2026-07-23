@@ -90,6 +90,12 @@ func main() {
 							} else {
 								tokens[i] = val
 							}
+						} else {
+							if siraBas > 0 {
+								tokens[i] = butoken[:siraBas] + val
+							} else {
+								tokens[i] = val
+							}
 						}
 					}
 				}
