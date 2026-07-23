@@ -68,17 +68,26 @@ func main() {
 
 			for i := 0; i < len(tokens); i++ {
 				butoken := tokens[i]
-				v := strings.Contains(tokens[i], "$")
-				if v {
-					sira := strings.Index(butoken, "$")
-					v_token := butoken[sira+1:]
+				for strings.Contains(butoken, "$") {
+					siraBas := strings.Index(butoken, "$")
+					if strings.Contains(butoken, "{") {
+						siraSon := strings.Index(butoken, "}")
+						v_token := butoken[siraBas+2 : siraSon]
+						val := isAVar(v_token)
+						if val != "" && siraSon <= len(butoken) {
 
-					val := isAVar(v_token)
-					if val != "" {
-						if sira > 0 {
-							tokens[i] = butoken[:sira] + val
-						} else {
-							tokens[i] = val
+							tokens[i] = butoken[:siraBas] + val + butoken[siraSon+1:]
+						}
+					} else {
+						v_token := butoken[siraBas+1:]
+
+						val := isAVar(v_token)
+						if val != "" {
+							if siraBas > 0 {
+								tokens[i] = butoken[:siraBas] + val
+							} else {
+								tokens[i] = val
+							}
 						}
 					}
 				}
