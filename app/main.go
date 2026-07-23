@@ -68,7 +68,7 @@ func main() {
 
 			for i := 0; i < len(tokens); i++ {
 				butoken := tokens[i]
-				for strings.Contains(butoken, "$") {
+				for strings.Contains(tokens[i], "$") {
 					siraBas := strings.Index(butoken, "$")
 					if strings.Contains(butoken, "{") {
 						siraSon := strings.Index(butoken, "}")
