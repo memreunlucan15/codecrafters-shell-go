@@ -1,34 +1,32 @@
 [![progress-banner](https://backend.codecrafters.io/progress/shell/315e8342-2f17-4d99-a405-0ab392e40752)](https://app.codecrafters.io/users/memreunlucan15?r=2qF)
 
-This is a starting point for Go solutions to the
-["Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview).
+# Build Your Own Shell — Go
 
-In this challenge, you'll build your own POSIX compliant shell that's capable of
-interpreting shell commands, running external programs and builtin commands like
-cd, pwd, echo and more. Along the way, you'll learn about shell command parsing,
-REPLs, builtin commands, and more.
+My solution to the [CodeCrafters "Build Your Own Shell" Challenge](https://app.codecrafters.io/courses/shell/overview), written from scratch in Go.
 
-**Note**: If you're viewing this repo on GitHub, head over to
-[codecrafters.io](https://codecrafters.io) to try the challenge.
+It's a small POSIX-style shell: it reads a line, parses it, and either runs a builtin, executes an external program from `PATH`, or wires up a pipeline. I wrote every part by hand to actually understand how a shell works under the hood — the tokenizer, process management, job control and completion are all my own code rather than library glue.
 
-# Passing the first stage
+## Features
 
-The entry point for your `shell` implementation is in `app/main.go`. Study and
-uncomment the relevant code, then run the command below to execute the tests on
-our servers:
+- **REPL** — read, evaluate, print, loop
+- **Builtins** — `echo`, `exit`, `type`, `pwd`, `cd`, `history`, `jobs`, `complete`, `declare`
+- **External commands** — resolved through `PATH` and run as child processes
+- **Quoting** — single quotes, double quotes and backslash escaping, handled by a hand-written state-machine tokenizer
+- **Redirection** — `>`, `1>`, `2>`, `>>`, `1>>`, `2>>`
+- **Pipelines** — two-command and multi-command pipelines, including pipelines that mix builtins and external programs
+- **Background jobs** — `cmd &`, the `jobs` builtin, and automatic reaping before each prompt
+- **Tab completion** — builtins, `PATH` executables, files and directories, longest-common-prefix completion, multiple-match listing, and programmable completion via `complete -C`
+- **History** — in-memory history, `history -r/-w/-a`, and persistence through `HISTFILE`
+- **Parameter expansion** — `$VAR` and `${VAR}`
+
+## Running it locally
+
+You need Go (1.26+) installed. Then:
 
 ```sh
-codecrafters submit
+./your_program.sh
 ```
 
-Time to move on to the next stage!
+## Notes
 
-# Stage 2 & beyond
-
-Note: This section is for stages 2 and beyond.
-
-1. Ensure you have `go (1.26)` installed locally
-1. Run `./your_program.sh` to run your program, which is implemented in
-   `app/main.go`.
-1. Run `codecrafters submit` to submit your solution to CodeCrafters. Test
-   output will be streamed to your terminal.
+This is a learning project — the goal was understanding, not building a production shell. Working through it stage by stage taught me a lot about parsing, processes, pipes, concurrency and how much is really going on every time you hit Enter in a terminal.
