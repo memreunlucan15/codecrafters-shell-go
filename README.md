@@ -21,10 +21,16 @@ It's a small POSIX-style shell: it reads a line, parses it, and either runs a bu
 
 ## Running it locally
 
-You need Go (1.26+) installed. Then:
+You need Go (1.26+) installed. Then just run the `app` package:
 
 ```sh
-./your_program.sh
+go run ./app
+```
+
+On Linux/macOS you can also use the build-and-run script:
+
+```sh
+./my_shell.sh
 ```
 
 ## Notes
